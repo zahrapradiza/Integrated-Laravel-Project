@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -40,13 +41,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 
-    // Categories Read-Only (Admin & Staff)
+    // Admin & Staff Operations (Categories, Suppliers Read, and Purchases Stock-In)
     Route::middleware('role:admin,staff')->group(function () {
         Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
         Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
+
+        // Purchases (Stock-In) Operations
+        Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+        Route::get('/purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
+        Route::post('/purchases', [PurchaseController::class, 'store'])->name('purchases.store');
+        Route::get('/purchases/{purchase}', [PurchaseController::class, 'show'])->name('purchases.show');
     });
 
-    // Admin-Only Master Data Management (Create, Edit, Delete) & User Management
+    // Admin-Only Master Data Management (Create, Edit, Delete) & Cancellation
     Route::middleware('role:admin')->group(function () {
         // Categories Mutation
         Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
@@ -68,6 +75,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
         Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+        // Purchase Cancellation (Admin Only)
+        Route::post('/purchases/{purchase}/cancel', [PurchaseController::class, 'cancel'])->name('purchases.cancel');
 
         // User Management Resource
         Route::resource('users', UserController::class);

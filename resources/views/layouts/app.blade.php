@@ -82,6 +82,9 @@
                             <a href="{{ route('suppliers.index') }}" class="px-3 py-2 rounded-lg text-sm font-semibold transition-colors {{ request()->routeIs('suppliers.*') ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
                                 <i class="fa-solid fa-industry mr-1.5 text-xs"></i> Pemasok
                             </a>
+                            <a href="{{ route('purchases.index') }}" class="px-3 py-2 rounded-lg text-sm font-semibold transition-colors {{ request()->routeIs('purchases.*') ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                                <i class="fa-solid fa-truck-ramp-box mr-1.5 text-xs"></i> Stock-In (Pembelian)
+                            </a>
 
                             @if(auth()->user()->isAdmin())
                                 <a href="{{ route('users.index') }}" class="px-3 py-2 rounded-lg text-sm font-semibold transition-colors {{ request()->routeIs('users.*') ? 'bg-purple-50 text-purple-700' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
