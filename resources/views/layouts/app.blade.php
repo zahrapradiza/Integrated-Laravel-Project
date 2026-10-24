@@ -73,29 +73,25 @@
                     @auth
                         @if(auth()->user()->isAdmin() || auth()->user()->isStaff())
                             <!-- Admin & Staff Navigation -->
-                            <a href="{{ route('dashboard') }}#catalog" class="px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+                            <a href="{{ route('products.index') }}" class="px-3 py-2 rounded-lg text-sm font-semibold transition-colors {{ request()->routeIs('products.*') ? 'bg-plush-50 text-plush-700' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
                                 <i class="fa-solid fa-boxes-stacked mr-1.5 text-xs"></i> Produk Boneka
                             </a>
-                            <a href="{{ route('dashboard') }}#purchases" class="px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
-                                <i class="fa-solid fa-truck-ramp-box mr-1.5 text-xs"></i> Stock-In (Pembelian)
+                            <a href="{{ route('categories.index') }}" class="px-3 py-2 rounded-lg text-sm font-semibold transition-colors {{ request()->routeIs('categories.*') ? 'bg-plush-50 text-plush-700' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                                <i class="fa-solid fa-tags mr-1.5 text-xs"></i> Kategori
                             </a>
-                            <a href="{{ route('dashboard') }}#sales" class="px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
-                                <i class="fa-solid fa-cash-register mr-1.5 text-xs"></i> Stock-Out (Penjualan)
+                            <a href="{{ route('suppliers.index') }}" class="px-3 py-2 rounded-lg text-sm font-semibold transition-colors {{ request()->routeIs('suppliers.*') ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                                <i class="fa-solid fa-industry mr-1.5 text-xs"></i> Pemasok
                             </a>
 
                             @if(auth()->user()->isAdmin())
-                                <span class="text-slate-300">|</span>
-                                <span class="px-2.5 py-1 text-xs font-bold rounded-md bg-purple-50 text-purple-700 border border-purple-200 inline-flex items-center">
-                                    <i class="fa-solid fa-shield-halved mr-1"></i> Admin Full Access
-                                </span>
+                                <a href="{{ route('users.index') }}" class="px-3 py-2 rounded-lg text-sm font-semibold transition-colors {{ request()->routeIs('users.*') ? 'bg-purple-50 text-purple-700' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
+                                    <i class="fa-solid fa-users-gear mr-1.5 text-xs"></i> Kelola User
+                                </a>
                             @endif
                         @else
                             <!-- Customer Navigation -->
-                            <a href="{{ route('dashboard') }}#catalog" class="px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+                            <a href="{{ route('products.catalog') }}" class="px-3 py-2 rounded-lg text-sm font-semibold transition-colors {{ request()->routeIs('products.catalog') ? 'bg-plush-50 text-plush-700' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100' }}">
                                 <i class="fa-solid fa-store mr-1.5 text-xs"></i> Katalog Boneka
-                            </a>
-                            <a href="{{ route('dashboard') }}#orders" class="px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
-                                <i class="fa-solid fa-bag-shopping mr-1.5 text-xs"></i> Pesanan Saya
                             </a>
                         @endif
                     @endauth

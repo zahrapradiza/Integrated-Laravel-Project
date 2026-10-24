@@ -1,7 +1,11 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,30 +33,43 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Role-Specific Protected Route Groups
-    |--------------------------------------------------------------------------
-    */
+    // Customer Catalog Route
+    Route::get('/catalog', [ProductController::class, 'catalog'])->name('products.catalog');
 
-    // 1. ADMIN ONLY (User Management & Sensitive Actions)
-    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/users', function () {
-            return redirect()->route('dashboard')->with('success', 'Akses Admin Terverifikasi.');
-        })->name('users.index');
+    // Products View (All authenticated users can view, controller renders appropriate view)
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+
+    // Categories Read-Only (Admin & Staff)
+    Route::middleware('role:admin,staff')->group(function () {
+        Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+        Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
     });
 
-    // 2. ADMIN & STAFF (Inventory Stock-In & Stock-Out Management)
-    Route::middleware('role:admin,staff')->prefix('manage')->name('manage.')->group(function () {
-        Route::get('/inventory', function () {
-            return redirect()->route('dashboard')->with('success', 'Akses Operasional Staff & Admin Terverifikasi.');
-        })->name('inventory.index');
-    });
+    // Admin-Only Master Data Management (Create, Edit, Delete) & User Management
+    Route::middleware('role:admin')->group(function () {
+        // Categories Mutation
+        Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
+        Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+        Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+        Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
-    // 3. CUSTOMER ONLY (Personal Orders & Shopping Experience)
-    Route::middleware('role:customer')->prefix('shop')->name('customer.')->group(function () {
-        Route::get('/my-orders', function () {
-            return redirect()->route('dashboard')->with('success', 'Akses Pesanan Customer Terverifikasi.');
-        })->name('orders.index');
+        // Suppliers Mutation
+        Route::get('/suppliers/create', [SupplierController::class, 'create'])->name('suppliers.create');
+        Route::post('/suppliers', [SupplierController::class, 'store'])->name('suppliers.store');
+        Route::get('/suppliers/{supplier}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
+        Route::put('/suppliers/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
+        Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
+
+        // Products Mutation
+        Route::get('/products-create/create', [ProductController::class, 'create'])->name('products.create');
+        Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+        Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+        Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+        Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+        // User Management Resource
+        Route::resource('users', UserController::class);
     });
 });
