@@ -67,8 +67,8 @@ class AuthAndRoleTest extends TestCase
         $response = $this->actingAs($admin)->get('/dashboard');
         $response->assertStatus(200);
 
-        $adminRouteResponse = $this->actingAs($admin)->get('/admin/users');
-        $adminRouteResponse->assertRedirect('/dashboard');
+        $adminRouteResponse = $this->actingAs($admin)->get('/users');
+        $adminRouteResponse->assertStatus(200);
     }
 
     public function test_staff_cannot_access_admin_only_route(): void
@@ -76,7 +76,7 @@ class AuthAndRoleTest extends TestCase
         $staff = User::where('role', 'staff')->first();
         $this->assertNotNull($staff);
 
-        $response = $this->actingAs($staff)->get('/admin/users');
+        $response = $this->actingAs($staff)->get('/users');
         $response->assertStatus(403);
     }
 
@@ -86,11 +86,11 @@ class AuthAndRoleTest extends TestCase
         $this->assertNotNull($customer);
 
         // Cannot access admin route
-        $response = $this->actingAs($customer)->get('/admin/users');
+        $response = $this->actingAs($customer)->get('/users');
         $response->assertStatus(403);
 
         // Cannot access manage route
-        $responseManage = $this->actingAs($customer)->get('/manage/inventory');
+        $responseManage = $this->actingAs($customer)->get('/purchases');
         $responseManage->assertStatus(403);
     }
 
