@@ -114,9 +114,11 @@ class TransactionSeeder extends Seeder
                 'user_id' => $kasir->id,
                 'customer_id' => $nadia->id,
                 'customer_name' => $nadia->name,
+                'payment_method' => 'QRIS',
+                'payment_status' => 'paid',
                 'total' => 465000.00,
                 'status' => 'completed',
-                'notes' => 'Pembelian kado ulang tahun sahabat. Dilengkapi bungkus kado eksklusif BonekaKu.',
+                'notes' => "Pembelian kado ulang tahun sahabat. Dilengkapi bungkus pita manis Diza's Plushie.",
                 'sold_at' => '2026-10-20 11:20:00',
             ]
         );
@@ -146,6 +148,8 @@ class TransactionSeeder extends Seeder
                 'user_id' => $kasir->id,
                 'customer_id' => $rizky->id,
                 'customer_name' => $rizky->name,
+                'payment_method' => 'Transfer Bank',
+                'payment_status' => 'paid',
                 'total' => 273000.00,
                 'status' => 'completed',
                 'notes' => 'Pesanan kado wisuda rekan kampus. Termasuk kartu ucapan graduation custom.',
@@ -178,9 +182,11 @@ class TransactionSeeder extends Seeder
                 'user_id' => $kasir->id,
                 'customer_id' => $nadia->id,
                 'customer_name' => $nadia->name,
+                'payment_method' => 'E-Wallet',
+                'payment_status' => 'paid',
                 'total' => 270000.00,
                 'status' => 'completed',
-                'notes' => 'Pembelian langsung di kasir outlet Toko Boneka.',
+                'notes' => "Pembelian langsung di kasir outlet Diza's Plushie Store.",
                 'sold_at' => '2026-10-22 13:10:00',
             ]
         );

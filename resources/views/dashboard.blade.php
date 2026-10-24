@@ -28,7 +28,7 @@
                     @elseif($user->isStaff())
                         Kelola alur transaksi Stock-In dari supplier, catat transaksi kasir toko harian, dan pantau ketersediaan stok boneka secara real-time.
                     @else
-                        Selamat datang di Toko BonekaKu! Temukan beragam boneka lucu, teddy bear klasik, dan plushie impor berkualitas premium untuk kado maupun koleksi terbaik Anda.
+                        Selamat datang di Diza's Plushie! Temukan beragam boneka lucu, teddy bear klasik, dan plushie impor berkualitas premium untuk kado maupun koleksi terbaik Anda.
                     @endif
                 </p>
             </div>
@@ -407,7 +407,7 @@
                     <h2 class="text-lg font-extrabold text-slate-900 flex items-center">
                         <i class="fa-solid fa-clock-rotate-left mr-2 text-rose-500"></i> 5 Riwayat Pesanan Terbaru Saya
                     </h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Daftar boneka yang baru saja Anda pesan di Toko BonekaKu.</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Daftar boneka yang baru saja Anda pesan di Diza's Plushie.</p>
                 </div>
                 <a href="{{ route('sales.index') }}" class="text-xs font-bold text-rose-600 hover:text-rose-700 inline-flex items-center">
                     Lihat Seluruh Riwayat Pesanan <i class="fa-solid fa-arrow-right ml-1"></i>
@@ -465,41 +465,53 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-lg font-extrabold text-slate-900 flex items-center">
-                        <i class="fa-solid fa-heart mr-2 text-rose-500"></i> Rekomendasi Boneka Tersedia
+                        <i class="fa-solid fa-heart mr-2 text-pink-500"></i> Rekomendasi Boneka Tersedia &bull; Diza's Plushie
                     </h2>
                     <p class="text-xs text-slate-500">Pilihan boneka lucu dan empuk berstandar kualitas terbaik yang siap dipesan.</p>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <a href="{{ route('products.catalog') }}" class="text-xs font-bold text-rose-600 hover:text-rose-700 inline-flex items-center">
+                    <a href="{{ route('products.catalog') }}" class="text-xs font-bold text-pink-600 hover:text-pink-700 inline-flex items-center">
                         Buka Katalog Lengkap <i class="fa-solid fa-arrow-right ml-1"></i>
                     </a>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($featuredProducts as $item)
-                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                    <div class="bg-white rounded-3xl border border-pink-100 p-4 sm:p-5 shadow-sm hover:shadow-md hover:border-pink-200 transition-all flex flex-col justify-between group">
                         <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-plush-100 text-plush-700 font-mono">
-                                    {{ $item->category->name ?? 'Boneka' }}
-                                </span>
-                                <span class="text-xs font-bold text-slate-400 font-mono">{{ $item->sku }}</span>
+                            <!-- Doll Illustration Image -->
+                            <div class="w-full h-40 rounded-2xl bg-gradient-to-b from-pink-50/70 to-purple-50/40 border border-pink-100/60 flex items-center justify-center p-3 mb-3 relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-200">
+                                <img src="{{ asset($item->image_url ?? 'images/plushies/teddy-bear-pita.svg') }}" 
+                                     alt="{{ $item->name }}" 
+                                     class="max-h-full max-w-full object-contain filter drop-shadow-sm">
+                                
+                                <div class="absolute top-2 left-2">
+                                    <span class="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-white/90 text-pink-600 border border-pink-200 shadow-xs">
+                                        {{ $item->category->name ?? 'Boneka' }}
+                                    </span>
+                                </div>
+                                <div class="absolute top-2 right-2">
+                                    <span class="text-[10px] font-bold text-slate-400 font-mono bg-white/80 px-2 py-0.5 rounded-full border border-slate-100">
+                                        {{ $item->sku }}
+                                    </span>
+                                </div>
                             </div>
-                            <h3 class="font-extrabold text-slate-900 text-base line-clamp-1">{{ $item->name }}</h3>
+
+                            <h3 class="font-extrabold text-slate-900 text-base line-clamp-1 group-hover:text-pink-600 transition-colors">{{ $item->name }}</h3>
                             <p class="text-xs text-slate-500 mt-1">Ukuran: <strong class="text-slate-700">{{ $item->size ?? 'Standar' }}</strong></p>
                             <p class="text-xs text-slate-400 line-clamp-1">Bahan: {{ $item->material ?? 'Kain Plush Halus' }}</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <div class="mt-4 pt-3 border-t border-pink-50 flex items-center justify-between">
                             <div>
                                 <span class="text-[10px] uppercase font-bold text-slate-400 block">Harga</span>
-                                <span class="text-base font-black text-rose-600">Rp {{ number_format($item->selling_price, 0, ',', '.') }}</span>
+                                <span class="text-base font-black text-pink-600">Rp {{ number_format($item->selling_price, 0, ',', '.') }}</span>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <span class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+                                <span class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-200">
                                     Stok: {{ $item->stock }}
                                 </span>
-                                <a href="{{ route('sales.create') }}" class="px-2.5 py-1 rounded-lg bg-plush-600 hover:bg-plush-700 text-white text-xs font-bold shadow-sm transition-all flex items-center" title="Pesan boneka ini">
+                                <a href="{{ route('sales.create') }}" class="px-3 py-1.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white text-xs font-bold shadow-sm transition-all flex items-center" title="Pesan boneka ini">
                                     <i class="fa-solid fa-cart-shopping mr-1"></i> Pesan
                                 </a>
                             </div>

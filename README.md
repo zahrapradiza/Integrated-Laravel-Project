@@ -1,12 +1,12 @@
-# BonekaKu - Integrated Inventory & Sales Management System
+# Diza's Plushie - Integrated Inventory & Sales Management System
 
 [![Laravel Version](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
 [![PHP Version](https://img.shields.io/badge/PHP-%3E%3D8.2-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
 [![MySQL Database](https://img.shields.io/badge/MySQL-8.x%20%2F%20XAMPP-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-CDN-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![Tests Passing](https://img.shields.io/badge/Automated_Tests-40_Passed_(100%25)-success?style=for-the-badge&logo=checkmarx&logoColor=white)](#testing-guide--skenario-pengujian)
+[![Tests Passing](https://img.shields.io/badge/Automated_Tests-Passing_(100%25)-success?style=for-the-badge&logo=checkmarx&logoColor=white)](#panduan-pengujian-otomatis-automated-testing-guide)
 
-Aplikasi Web Terintegrasi untuk **Sistem Manajemen Inventori & Transaksi Penjualan Toko Boneka (Doll & Plushie Store)**, dibangun sebagai pemenuhan **Tugas Ujian Tengah Semester (UTS) Mata Kuliah Web Programming 2**.
+Aplikasi Web Terintegrasi untuk **Sistem Manajemen Inventori & Transaksi Penjualan Toko Boneka "Diza's Plushie" (Cute & Aesthetic Doll & Plushie Store)**, dibangun dengan tema **Soft Pastel Aesthetic yang manis, modern, dan lembut** sebagai pemenuhan **Tugas Ujian Tengah Semester (UTS) Mata Kuliah Web Programming 2**.
 
 ---
 
@@ -16,7 +16,7 @@ Aplikasi Web Terintegrasi untuk **Sistem Manajemen Inventori & Transaksi Penjual
 3. [Panduan Instalasi & Setup Lingkungan (Reproducible)](#3-panduan-instalasi--setup-lingkungan-reproducible)
 4. [Entity Relationship Diagram (ERD) & Penjelasan Relasi Database](#4-entity-relationship-diagram-erd--penjelasan-relasi-database)
 5. [Matriks Hak Akses & Peran Pengguna (Role-Based Access Control)](#5-matriks-hak-akses--peran-pengguna-role-based-access-control)
-6. [Daftar Akun Demo Pengujian](#6-daftar-akun-demo-pengujian)
+6. [Daftar Akun Demo Pengujian & Sistem Login 3 Role](#6-daftar-akun-demo-pengujian--sistem-login-3-role)
 7. [Fitur Unggulan & Aturan Bisnis yang Diimplementasikan](#7-fitur-unggulan--aturan-bisnis-yang-diimplementasikan)
 8. [Panduan Pengujian Otomatis (Automated Testing Guide)](#8-panduan-pengujian-otomatis-automated-testing-guide)
 9. [Known Limitations & Pengembangan Selanjutnya](#9-known-limitations--pengembangan-selanjutnya)
@@ -25,13 +25,18 @@ Aplikasi Web Terintegrasi untuk **Sistem Manajemen Inventori & Transaksi Penjual
 
 ## 1. Project Overview & Skenario Bisnis
 
-**BonekaKu** adalah sistem informasi manajemen inventori dan kasir modern yang dirancang khusus untuk toko ritel boneka dan plushie impor. Sistem ini mengintegrasikan rantai pasok pengadaan boneka dari pabrik/pemasok (*Stock-In*) hingga penjualan ritel ke konsumen (*Stock-Out*), baik melalui kasir toko fisik maupun pemesanan mandiri oleh pelanggan terdaftar (*Customer Self-Service Order*).
+**Diza's Plushie** adalah sistem informasi manajemen inventori dan kasir modern yang dirancang khusus untuk toko ritel boneka dan plushie impor dengan visualisasi **Soft Pastel Aesthetic** (warna Creamy White `#FFF9FB`, Soft Blush `#FDF2F8`, Pastel Pink `#FBCFE8`, Soft Mint `#D1FAE5`, Baby Peach `#FFEDD5`, dan font manis Quicksand & Plus Jakarta Sans).
+
+Sistem ini mengintegrasikan rantai pasok pengadaan boneka dari pabrik/pemasok (*Stock-In*) hingga penjualan ritel ke konsumen (*Stock-Out*), baik melalui kasir toko fisik maupun pemesanan mandiri oleh pelanggan terdaftar (*Customer Self-Service Order*).
 
 ### Masalah Bisnis yang Diselesaikan:
 - **Ketidakkonsistenan Stok**: Mengatasi risiko *overselling* atau selisih stok fisik akibat transaksi penjualan bersamaan dengan mengimplementasikan mekanisme konkurensi `Product::lockForUpdate()` di dalam transaksi atomik database (`DB::transaction`).
 - **Pencegahan Data Korup (Multi-Item Atomicity)**: Jika pelanggan membeli beberapa jenis boneka sekaligus dan stok salah satu boneka habis di tengah proses simpan, sistem secara otomatis membatalkan seluruh transaksi (*atomic rollback*), memastikan tidak ada stok yang terpotong sebagian atau nota yang tersimpan tanpa barang lengkap.
 - **Transparansi Biaya & Keamanan Peran**: Memisahkan secara ketat informasi harga modal (*purchase price*) dari pandangan pelanggan, sekaligus memberikan visibilitas penuh bagi pemilik toko (*Admin*) dan kasir/gudang (*Staff*).
 - **Monitoring Dini Kehabisan Stok**: Menyediakan dasbor pemantauan otomatis untuk produk yang sisa stoknya berada di bawah batas minimum (*low stock alert*).
+- **Pengalaman Pelanggan Bebas Hambatan (Passwordless Customer Login)**: Pelanggan tidak perlu mengingat atau memasukkan password saat login. Cukup memasukkan Nama dan Email, sistem langsung mengenali atau mendaftarkan akun baru secara otomatis.
+- **Dukungan Beragam Metode Pembayaran**: Transaksi kasir dan online mendukung metode bayar modern (QRIS Instant QR, Transfer Bank BCA/Mandiri/BSI, E-Wallet GoPay/OVO/ShopeePay/DANA, dan Tunai/COD).
+- **Ilustrasi Boneka Offline 100% Selalu Tampil**: Menyediakan 10 ilustrasi boneka SVG lokal yang aesthetic di folder `public/images/plushies/` sehingga katalog dan struk selalu tampil cantik tanpa bergantung pada koneksi internet luar.
 
 ---
 
@@ -43,7 +48,7 @@ Aplikasi ini dibangun menggunakan arsitektur modern Laravel 12 dengan dependensi
 - **Dependency Manager**: Composer `2.x`.
 - **Web Browser**: Google Chrome, Mozilla Firefox, Microsoft Edge, atau Safari versi terkini.
 - **Framework**: Laravel `12.x`.
-- **Frontend Assets**: Tailwind CSS, Font Awesome 6 Icons, Google Fonts (Plus Jakarta Sans).
+- **Frontend Assets**: Tailwind CSS, Font Awesome 6 Icons, Google Fonts (Quicksand & Plus Jakarta Sans).
 
 ---
 
@@ -73,7 +78,7 @@ cp .env.example .env
 
 Buka file `.env` dan pastikan konfigurasi koneksi MySQL sesuai dengan konfigurasi XAMPP lokal:
 ```env
-APP_NAME="BonekaKu Inventory & Sales"
+APP_NAME="Diza's Plushie"
 APP_ENV=local
 APP_KEY=
 APP_DEBUG=true
@@ -281,19 +286,25 @@ Aplikasi menerapkan sistem otorisasi berlapis menggunakan middleware server-side
 
 ---
 
-## 6. Daftar Akun Demo Pengujian
+## 6. Daftar Akun Demo Pengujian & Sistem Login 3 Role
 
-Semua akun demo di bawah ini telah disiapkan oleh database seeder dengan password default yang seragam:
+Aplikasi menyediakan **Sistem Portal Login 3 Role** di route `/login`:
+- **Portal Customer (Masuk Cepat Tanpa Password)**: Cukup memasukkan `Nama Lengkap` dan `Email`. Jika email telah terdaftar sebagai customer, sistem langsung melakukan login otomatis. Jika belum terdaftar, akun customer baru otomatis dibuatkan di belakang layar!
+- **Portal Staff**: Memerlukan `Email` dan `Password` dengan validasi server-side khusus role `staff`.
+- **Portal Administrator**: Memerlukan `Email` dan `Password` dengan validasi server-side khusus role `admin`.
+- **Keamanan Halaman Login**: Seluruh bocoran password/daftar akun demo telah dihilangkan dari tampilan layar `/login` agar aman dan rapi.
+
+Untuk keperluan pengujian dosen / demo, akun bawaan database seeder adalah:
 
 | Role | Nama Pengguna | Alamat Email | Password | Kegunaan / Skenario Pengujian |
 | :--- | :--- | :--- | :--- | :--- |
-| **Admin** | `Admin Owner BonekaKu` | `admin@bonekaku.test` | `password123` | Hak akses penuh: Master data, kelola user & role, pembatalan transaksi, dashboard omzet. |
+| **Admin** | `Admin Owner Diza's Plushie` | `admin@bonekaku.test` | `password123` | Hak akses penuh: Master data, kelola user & role, pembatalan transaksi, dashboard omzet. |
 | **Staff** | `Siti Kasir & Gudang` | `staff@bonekaku.test` | `password123` | Operasional: Input pengadaan Stock-In, input kasir penjualan multi-item, monitor stok rendah. |
 | **Staff** | `Budi Staff Inventori` | `budi.staff@bonekaku.test` | `password123` | Pengujian akses bersama antar staff operasional toko. |
-| **Customer**| `Nadia Putri (Customer)` | `customer@bonekaku.test` | `password123` | Pemesanan boneka mandiri, melihat riwayat pesanan pribadi, faktur nota belanja. |
-| **Customer**| `Rizky Pratama (Customer)`| `rizky@bonekaku.test` | `password123` | Pengujian isolasi data: Memverifikasi Customer A tidak bisa membuka nota Customer B. |
+| **Customer**| `Nadia Putri (Customer)` | `customer@bonekaku.test` | *Tanpa Password* (atau `password123`) | Pemesanan boneka mandiri, melihat riwayat pesanan pribadi, faktur nota belanja. |
+| **Customer**| `Rizky Pratama (Customer)`| `rizky@bonekaku.test` | *Tanpa Password* (atau `password123`) | Pengujian isolasi data: Memverifikasi Customer A tidak bisa membuka nota Customer B. |
 
-> **Fitur Cepat Login**: Pada halaman login (`/login`), tersedia tombol kartu demo untuk mengisi email dan password secara otomatis hanya dengan satu kali klik.
+> **Catatan Pengujian Customer**: Pada tab Customer di `/login`, penguji cukup memasukkan email `customer@bonekaku.test` (atau email sembarang untuk registrasi instan otomatis) tanpa perlu mengetikkan password sama sekali.
 
 ---
 
@@ -440,7 +451,7 @@ Meskipun sistem telah memenuhi seluruh kriteria fungsional dan teknis tugas UTS 
 ---
 
 ### Identitas Pengembang
-- **Nama Project**: BonekaKu Inventory & Sales Management System
+- **Nama Project**: Diza's Plushie Inventory & Sales Management System
 - **Repositori GitHub**: [https://github.com/zahrapradiza/Integrated-Laravel-Project](https://github.com/zahrapradiza/Integrated-Laravel-Project)
 - **Mata Kuliah**: Web Programming 2 (Ujian Tengah Semester)
 - **Tahun Akademik**: 2026

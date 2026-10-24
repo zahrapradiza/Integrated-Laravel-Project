@@ -124,8 +124,6 @@
                         <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-            </div>
-
             <!-- Minimum Stock -->
             <div>
                 <label for="minimum_stock" class="block text-sm font-bold text-slate-700 mb-1.5">
@@ -133,9 +131,55 @@
                 </label>
                 <input type="number" name="minimum_stock" id="minimum_stock" required min="0"
                     value="{{ old('minimum_stock', $product->minimum_stock) }}"
-                    class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-plush-500 focus:border-plush-500 text-sm bg-slate-50/50 hover:bg-white focus:bg-white transition-all font-bold text-rose-600">
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-sm bg-slate-50/50 hover:bg-white focus:bg-white transition-all font-bold text-rose-600">
                 <p class="text-[11px] text-slate-400 mt-1">Perubahan saldo stok fisik dilakukan melalui modul Pembelian (Stock-In) atau Penjualan (Stock-Out) agar jejak audit terjaga.</p>
                 @error('minimum_stock')
+                    <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Image URL Input -->
+            <div>
+                <label for="image_url" class="block text-sm font-bold text-slate-700 mb-1.5">
+                    Ilustrasi / Foto Boneka (URL atau Pilihan Preset)
+                </label>
+                <div class="flex items-center space-x-3 mb-2">
+                    <img src="{{ asset($product->image_url ?? 'images/plushies/teddy-bear-pita.svg') }}" 
+                         alt="{{ $product->name }}" 
+                         id="current_image_preview"
+                         class="w-12 h-12 object-contain rounded-xl bg-pink-50 border border-pink-100 p-1 flex-shrink-0">
+                    <input type="text" name="image_url" id="image_url"
+                        value="{{ old('image_url', $product->image_url) }}"
+                        oninput="document.getElementById('current_image_preview').src = this.value || '{{ asset('images/plushies/teddy-bear-pita.svg') }}'"
+                        placeholder="Contoh: images/plushies/teddy-bear-pita.svg atau https://..."
+                        class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-sm bg-slate-50/50 hover:bg-white focus:bg-white transition-all">
+                </div>
+                <p class="text-[11px] text-slate-400">
+                    Opsional. Jika dikosongkan, sistem otomatis memberikan ilustrasi pastel lucu sesuai kategori boneka.
+                </p>
+                <!-- Quick Preset Selector -->
+                <div class="mt-2.5 flex flex-wrap gap-2 items-center">
+                    <span class="text-[11px] font-bold text-slate-400">Pilih Cepat:</span>
+                    @php
+                        $presets = [
+                            ['label' => '🧸 Teddy Pita', 'path' => 'images/plushies/teddy-bear-pita.svg'],
+                            ['label' => '🐰 Kelinci Pink', 'path' => 'images/plushies/kelinci-pink.svg'],
+                            ['label' => '🐼 Panda Bambu', 'path' => 'images/plushies/panda-bambu.svg'],
+                            ['label' => '🧋 Kucing Boba', 'path' => 'images/plushies/kucing-boba.svg'],
+                            ['label' => '🦊 Rubah Pastel', 'path' => 'images/plushies/rubah-pastel.svg'],
+                            ['label' => '🎓 Beruang Wisuda', 'path' => 'images/plushies/beruang-wisuda.svg'],
+                            ['label' => '🌸 Buket Boneka', 'path' => 'images/plushies/buket-boneka.svg'],
+                            ['label' => '🐕 Bantal Shiba', 'path' => 'images/plushies/bantal-shiba.svg'],
+                        ];
+                    @endphp
+                    @foreach($presets as $pr)
+                        <button type="button" onclick="document.getElementById('image_url').value = '{{ $pr['path'] }}'; document.getElementById('current_image_preview').src = '{{ asset('') }}' + '{{ $pr['path'] }}'"
+                            class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-pink-50 hover:bg-pink-100 text-pink-700 border border-pink-200 transition-colors">
+                            {{ $pr['label'] }}
+                        </button>
+                    @endforeach
+                </div>
+                @error('image_url')
                     <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
                 @enderror
             </div>

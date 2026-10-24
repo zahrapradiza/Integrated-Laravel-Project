@@ -18,6 +18,7 @@ class Product extends Model
         'name',
         'size',
         'material',
+        'image_url',
         'purchase_price',
         'selling_price',
         'stock',

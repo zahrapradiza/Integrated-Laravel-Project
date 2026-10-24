@@ -107,13 +107,20 @@
                                 {{ $products->firstItem() + $index }}
                             </td>
                             <td class="px-6 py-4">
-                                <a href="{{ route('products.show', $prod) }}" class="font-extrabold text-slate-900 hover:text-plush-600 transition-colors block">
-                                    {{ $prod->name }}
-                                </a>
-                                <span class="text-xs text-slate-400 font-mono">{{ $prod->sku }}</span>
+                                <div class="flex items-center space-x-3">
+                                    <img src="{{ asset($prod->image_url ?? 'images/plushies/teddy-bear-pita.svg') }}" 
+                                         alt="{{ $prod->name }}" 
+                                         class="w-12 h-12 object-contain rounded-2xl bg-pink-50 border border-pink-100 p-1 flex-shrink-0 shadow-sm">
+                                    <div>
+                                        <a href="{{ route('products.show', $prod) }}" class="font-extrabold text-slate-900 hover:text-pink-600 transition-colors block">
+                                            {{ $prod->name }}
+                                        </a>
+                                        <span class="text-xs text-slate-400 font-mono">{{ $prod->sku }}</span>
+                                    </div>
+                                </div>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">
+                                <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-pink-50 text-pink-700 border border-pink-100">
                                     {{ $prod->category->name ?? '-' }}
                                 </span>
                             </td>

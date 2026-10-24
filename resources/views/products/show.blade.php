@@ -15,20 +15,28 @@
     </div>
 
     <!-- Product Card Header -->
-    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-            <div>
-                <div class="flex items-center space-x-2 mb-2">
-                    <span class="px-2.5 py-0.5 rounded-lg text-xs font-bold uppercase bg-plush-100 text-plush-700">
-                        {{ $product->category->name ?? 'Kategori Boneka' }}
-                    </span>
-                    <span class="text-xs font-mono font-bold text-slate-400">{{ $product->sku }}</span>
+    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-pink-100 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+            <div class="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-5">
+                <div class="w-32 h-32 rounded-3xl bg-gradient-to-br from-pink-50 to-purple-50 border border-pink-100 p-2.5 flex items-center justify-center flex-shrink-0 shadow-xs">
+                    <img src="{{ asset($product->image_url ?? 'images/plushies/teddy-bear-pita.svg') }}" 
+                         alt="{{ $product->name }}" 
+                         class="max-h-full max-w-full object-contain filter drop-shadow-sm">
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-black text-slate-900">{{ $product->name }}</h1>
+                <div>
+                    <div class="flex items-center space-x-2 mb-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase bg-pink-100 text-pink-700 border border-pink-200">
+                            {{ $product->category->name ?? 'Kategori Boneka' }}
+                        </span>
+                        <span class="text-xs font-mono font-bold text-slate-400">{{ $product->sku }}</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900">{{ $product->name }}</h1>
+                    <p class="text-xs text-slate-400 mt-1">Koleksi Asli Diza's Plushie Store</p>
+                </div>
             </div>
 
             <!-- Stock Status Pill -->
-            <div class="p-4 rounded-2xl {{ $product->stock <= $product->minimum_stock ? 'bg-rose-50 border border-rose-200 text-rose-700' : 'bg-emerald-50 border border-emerald-200 text-emerald-800' }} text-center sm:text-right min-w-[140px]">
+            <div class="p-4 rounded-3xl {{ $product->stock <= $product->minimum_stock ? 'bg-rose-50 border border-rose-200 text-rose-700' : 'bg-emerald-50 border border-emerald-200 text-emerald-800' }} text-center sm:text-right min-w-[150px]">
                 <span class="text-[10px] uppercase font-bold tracking-wider block">Saldo Stok Fisik</span>
                 <span class="text-2xl font-black">{{ $product->stock }} pcs</span>
                 <span class="text-[11px] block font-semibold mt-0.5">

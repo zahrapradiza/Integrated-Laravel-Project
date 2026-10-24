@@ -199,4 +199,25 @@ class SaleTest extends TestCase
         $this->assertEquals(10, $this->product1->fresh()->stock);
         $this->assertEquals('cancelled', $sale->fresh()->status);
     }
+
+    public function test_sale_persists_payment_method_and_payment_status(): void
+    {
+        $response = $this->actingAs($this->customer1)->post('/sales', [
+            'payment_method' => 'Transfer Bank',
+            'items' => [
+                [
+                    'product_id' => $this->product1->id,
+                    'quantity' => 1,
+                ],
+            ],
+            'notes' => 'Pembayaran via Bank Mandiri',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('sales', [
+            'customer_id' => $this->customer1->id,
+            'payment_method' => 'Transfer Bank',
+            'payment_status' => 'paid',
+        ]);
+    }
 }

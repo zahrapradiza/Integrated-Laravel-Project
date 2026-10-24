@@ -15,12 +15,12 @@
                 </h1>
             </div>
             <p class="text-slate-500 text-xs sm:text-sm mt-1">
-                {{ $user->isCustomer() ? 'Daftar transaksi pembelian boneka Anda di BonekaKu beserta status pembayaran dan faktur belanja.' : 'Pencatatan kasir toko dan alur stock-out pengurangan stok fisik boneka.' }}
+                {{ $user->isCustomer() ? "Daftar transaksi pembelian boneka Anda di Diza's Plushie beserta status pembayaran dan faktur belanja." : 'Pencatatan kasir toko dan alur stock-out pengurangan stok fisik boneka.' }}
             </p>
         </div>
 
         <div>
-            <a href="{{ route('sales.create') }}" class="inline-flex items-center px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition-all duration-200">
+            <a href="{{ route('sales.create') }}" class="inline-flex items-center px-4 py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-sm shadow-sm transition-all duration-200">
                 <i class="fa-solid fa-plus mr-1.5"></i>
                 {{ $user->isCustomer() ? 'Pesan Boneka Baru' : 'Buat Penjualan Baru' }}
             </a>
@@ -38,14 +38,14 @@
                         <i class="fa-solid fa-magnifying-glass text-xs"></i>
                     </span>
                     <input type="text" name="search" value="{{ $search }}" placeholder="No INV atau nama..."
-                        class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 focus:bg-white transition-all">
+                        class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-pink-500 focus:border-pink-500 bg-slate-50 focus:bg-white transition-all">
                 </div>
             </div>
 
             <!-- Status Filter -->
             <div class="sm:col-span-3">
                 <label class="block text-xs font-bold text-slate-500 mb-1">Status Transaksi</label>
-                <select name="status" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 focus:bg-white transition-all">
+                <select name="status" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-pink-500 focus:border-pink-500 bg-slate-50 focus:bg-white transition-all">
                     <option value="">Semua Status</option>
                     <option value="completed" {{ $status === 'completed' ? 'selected' : '' }}>Completed</option>
                     <option value="cancelled" {{ $status === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
@@ -56,14 +56,14 @@
             <div class="sm:col-span-2">
                 <label class="block text-xs font-bold text-slate-500 mb-1">Dari Tanggal</label>
                 <input type="date" name="start_date" value="{{ $startDate }}"
-                    class="w-full px-2.5 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 focus:bg-white transition-all">
+                    class="w-full px-2.5 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-pink-500 focus:border-pink-500 bg-slate-50 focus:bg-white transition-all">
             </div>
 
             <div class="sm:col-span-3 flex items-center space-x-1.5">
                 <div class="w-full">
                     <label class="block text-xs font-bold text-slate-500 mb-1">Sampai</label>
                     <input type="date" name="end_date" value="{{ $endDate }}"
-                        class="w-full px-2.5 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 focus:bg-white transition-all">
+                        class="w-full px-2.5 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-pink-500 focus:border-pink-500 bg-slate-50 focus:bg-white transition-all">
                 </div>
                 <button type="submit" class="mt-5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold transition-colors" title="Terapkan Filter">
                     <i class="fa-solid fa-filter"></i>
@@ -94,6 +94,7 @@
                         @if(!$user->isCustomer())
                             <th class="px-6 py-4">Kasir / Pembuat</th>
                         @endif
+                        <th class="px-6 py-4 text-center">Metode Bayar</th>
                         <th class="px-6 py-4 text-center">Jumlah Item</th>
                         <th class="px-6 py-4 text-right">Total Belanja</th>
                         <th class="px-6 py-4 text-center">Status</th>
@@ -102,19 +103,19 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     @forelse($sales as $index => $sale)
-                        <tr class="hover:bg-slate-50/80 transition-colors {{ $sale->status === 'cancelled' ? 'bg-slate-50/60 opacity-75' : '' }}">
+                        <tr class="hover:bg-pink-50/30 transition-colors {{ $sale->status === 'cancelled' ? 'bg-slate-50/60 opacity-75' : '' }}">
                             <td class="px-6 py-4 text-center font-bold text-slate-400">
                                 {{ $sales->firstItem() + $index }}
                             </td>
                             <td class="px-6 py-4">
-                                <a href="{{ route('sales.show', $sale) }}" class="font-extrabold text-emerald-600 hover:underline font-mono text-sm block">
+                                <a href="{{ route('sales.show', $sale) }}" class="font-extrabold text-pink-600 hover:text-pink-700 hover:underline font-mono text-sm block">
                                     {{ $sale->sale_number }}
                                 </a>
                             </td>
                             <td class="px-6 py-4 font-bold text-slate-800">
                                 {{ $sale->customer_name ?? ($sale->customer->name ?? 'Pelanggan Umum') }}
                                 @if($sale->customer_id)
-                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-50 text-rose-600 border border-rose-200 ml-1">
+                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-extrabold bg-pink-100 text-pink-700 border border-pink-200 ml-1">
                                         MEMBER
                                     </span>
                                 @endif
@@ -128,6 +129,26 @@
                                     <span class="block text-[10px] text-slate-400">({{ strtoupper($sale->user->role ?? '-') }})</span>
                                 </td>
                             @endif
+                            <td class="px-6 py-4 text-center">
+                                @php
+                                    $pm = $sale->payment_method ?? 'QRIS';
+                                    $badgeClass = match($pm) {
+                                        'QRIS' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                        'Transfer Bank' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                                        'E-Wallet' => 'bg-pink-50 text-pink-700 border-pink-200',
+                                        default => 'bg-amber-50 text-amber-700 border-amber-200'
+                                    };
+                                    $iconClass = match($pm) {
+                                        'QRIS' => 'fa-qrcode',
+                                        'Transfer Bank' => 'fa-building-columns',
+                                        'E-Wallet' => 'fa-wallet',
+                                        default => 'fa-money-bill-wave'
+                                    };
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border {{ $badgeClass }}">
+                                    <i class="fa-solid {{ $iconClass }} mr-1 text-[10px]"></i> {{ $pm }}
+                                </span>
+                            </td>
                             <td class="px-6 py-4 text-center font-bold text-slate-700">
                                 {{ $sale->items->sum('quantity') }} pcs
                             </td>
@@ -147,7 +168,7 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="inline-flex items-center space-x-1.5">
-                                    <a href="{{ route('sales.show', $sale) }}" class="p-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-colors" title="Lihat Faktur / Struk">
+                                    <a href="{{ route('sales.show', $sale) }}" class="p-2 rounded-lg bg-pink-50 hover:bg-pink-100 text-pink-700 border border-pink-200 transition-colors" title="Lihat Faktur / Struk">
                                         <i class="fa-solid fa-receipt text-xs"></i>
                                     </a>
 
@@ -164,7 +185,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ $user->isCustomer() ? 8 : 9 }}" class="px-6 py-12 text-center text-slate-400">
+                            <td colspan="{{ $user->isCustomer() ? 9 : 10 }}" class="px-6 py-12 text-center text-slate-400">
                                 <i class="fa-solid fa-cash-register text-4xl mb-2 text-slate-300"></i>
                                 <p class="font-semibold">Belum ada transaksi penjualan yang tercatat.</p>
                             </td>

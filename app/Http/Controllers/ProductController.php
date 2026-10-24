@@ -99,6 +99,7 @@ class ProductController extends Controller
             'category_id' => ['required', 'exists:categories,id'],
             'size' => ['nullable', 'string', 'max:100'],
             'material' => ['nullable', 'string', 'max:100'],
+            'image_url' => ['nullable', 'string', 'max:255'],
             'purchase_price' => ['required', 'numeric', 'min:0'],
             'selling_price' => ['required', 'numeric', 'min:0'],
             'stock' => ['nullable', 'integer', 'min:0'],
@@ -115,6 +116,9 @@ class ProductController extends Controller
         ]);
 
         $validated['stock'] = $validated['stock'] ?? 0;
+        if (empty($validated['image_url'])) {
+            $validated['image_url'] = '/images/plushies/teddy-bear-pita.svg';
+        }
 
         Product::create($validated);
 
@@ -156,6 +160,7 @@ class ProductController extends Controller
             'category_id' => ['required', 'exists:categories,id'],
             'size' => ['nullable', 'string', 'max:100'],
             'material' => ['nullable', 'string', 'max:100'],
+            'image_url' => ['nullable', 'string', 'max:255'],
             'purchase_price' => ['required', 'numeric', 'min:0'],
             'selling_price' => ['required', 'numeric', 'min:0'],
             'minimum_stock' => ['required', 'integer', 'min:0'],
@@ -168,6 +173,10 @@ class ProductController extends Controller
             'selling_price.required' => 'Harga jual wajib diisi.',
             'minimum_stock.required' => 'Batas minimum stok wajib diisi.',
         ]);
+
+        if (empty($validated['image_url'])) {
+            $validated['image_url'] = $product->image_url ?: '/images/plushies/teddy-bear-pita.svg';
+        }
 
         $product->update($validated);
 

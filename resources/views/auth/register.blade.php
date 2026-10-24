@@ -7,7 +7,7 @@
             <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 mb-4 shadow-sm">
                 <i class="fa-solid fa-user-plus text-xl"></i>
             </div>
-            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Daftar Akun Pembeli BonekaKu</h1>
+            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Daftar Akun Pembeli Diza's Plushie</h1>
             <p class="text-slate-500 text-sm mt-1">Buat akun customer untuk mulai memesan boneka dan melihat riwayat belanja Anda.</p>
         </div>
 

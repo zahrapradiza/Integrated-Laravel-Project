@@ -46,7 +46,7 @@ class AuthAndRoleTest extends TestCase
         $response->assertSee('Pelanggan');
         $response->assertSee('Staff Toko');
         $response->assertSee('Administrator');
-        $response->assertSee('Masuk Pelanggan BonekaKu');
+        $response->assertSee("Masuk Pelanggan Diza's Plushie");
 
         // Verify NO demo credentials or passwords leaked on screen
         $response->assertDontSee('Akun Demo Siap Pakai');
@@ -73,7 +73,7 @@ class AuthAndRoleTest extends TestCase
         // 3. Customer portal
         $customerResponse = $this->get('/login?portal=customer');
         $customerResponse->assertStatus(200);
-        $customerResponse->assertSee('Masuk Pelanggan BonekaKu');
+        $customerResponse->assertSee("Masuk Pelanggan Diza's Plushie");
         $customerResponse->assertSee('Daftar Akun Customer Sekarang');
     }
 
@@ -216,5 +216,59 @@ class AuthAndRoleTest extends TestCase
         ]);
         $adminResponse->assertRedirect('/dashboard');
         $this->assertAuthenticated();
+    }
+
+    public function test_customer_can_login_without_password(): void
+    {
+        // Existing customer logs in passwordless
+        $response = $this->post('/login', [
+            'portal_role' => 'customer',
+            'name' => 'Nadia Putri',
+            'email' => 'customer@bonekaku.test',
+        ]);
+
+        $response->assertRedirect('/dashboard');
+        $this->assertAuthenticated();
+        $this->assertEquals('customer@bonekaku.test', auth()->user()->email);
+        $this->assertTrue(auth()->user()->isCustomer());
+
+        auth()->logout();
+
+        // New customer registers and logs in automatically without password
+        $newEmail = 'zahra.new@plushie.test';
+        $newCustomerResponse = $this->post('/login', [
+            'portal_role' => 'customer',
+            'name' => 'Zahra Pradiza',
+            'email' => $newEmail,
+        ]);
+
+        $newCustomerResponse->assertRedirect('/dashboard');
+        $this->assertAuthenticated();
+        $this->assertDatabaseHas('users', [
+            'email' => $newEmail,
+            'name' => 'Zahra Pradiza',
+            'role' => 'customer',
+        ]);
+    }
+
+    public function test_staff_and_admin_portals_still_require_password(): void
+    {
+        // Staff portal without password must fail
+        $staffResponse = $this->post('/login', [
+            'portal_role' => 'staff',
+            'email' => 'staff@bonekaku.test',
+            'password' => '',
+        ]);
+        $staffResponse->assertSessionHasErrors('password');
+        $this->assertGuest();
+
+        // Admin portal without password must fail
+        $adminResponse = $this->post('/login', [
+            'portal_role' => 'admin',
+            'email' => 'admin@bonekaku.test',
+            'password' => '',
+        ]);
+        $adminResponse->assertSessionHasErrors('password');
+        $this->assertGuest();
     }
 }

@@ -18,6 +18,8 @@ class Sale extends Model
         'sale_number',
         'total',
         'status',
+        'payment_method',
+        'payment_status',
         'notes',
         'sold_at',
     ];

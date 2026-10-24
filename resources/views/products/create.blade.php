@@ -139,19 +139,57 @@
                         <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-
                 <div>
                     <label for="minimum_stock" class="block text-sm font-bold text-slate-700 mb-1.5">
                         Batas Minimum Stok (Alert) <span class="text-rose-500">*</span>
                     </label>
                     <input type="number" name="minimum_stock" id="minimum_stock" required min="0"
                         value="{{ old('minimum_stock', 5) }}"
-                        class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-plush-500 focus:border-plush-500 text-sm bg-slate-50/50 hover:bg-white focus:bg-white transition-all font-bold text-rose-600">
+                        class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-sm bg-slate-50/50 hover:bg-white focus:bg-white transition-all font-bold text-rose-600">
                     <p class="text-[11px] text-slate-400 mt-1">Sistem memberi peringatan jika sisa stok &le; angka ini.</p>
                     @error('minimum_stock')
                         <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
                     @enderror
                 </div>
+            </div>
+
+            <!-- Image URL Input -->
+            <div>
+                <label for="image_url" class="block text-sm font-bold text-slate-700 mb-1.5">
+                    Ilustrasi / Foto Boneka (URL atau Pilihan Preset)
+                </label>
+                <input type="text" name="image_url" id="image_url"
+                    value="{{ old('image_url') }}"
+                    placeholder="Contoh: images/plushies/teddy-bear-pita.svg atau https://..."
+                    class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-sm bg-slate-50/50 hover:bg-white focus:bg-white transition-all">
+                <p class="text-[11px] text-slate-400 mt-1">
+                    Opsional. Jika dikosongkan, sistem otomatis memberikan ilustrasi pastel lucu sesuai kategori boneka.
+                </p>
+                <!-- Quick Preset Selector -->
+                <div class="mt-2.5 flex flex-wrap gap-2 items-center">
+                    <span class="text-[11px] font-bold text-slate-400">Pilih Cepat:</span>
+                    @php
+                        $presets = [
+                            ['label' => '🧸 Teddy Pita', 'path' => 'images/plushies/teddy-bear-pita.svg'],
+                            ['label' => '🐰 Kelinci Pink', 'path' => 'images/plushies/kelinci-pink.svg'],
+                            ['label' => '🐼 Panda Bambu', 'path' => 'images/plushies/panda-bambu.svg'],
+                            ['label' => '🧋 Kucing Boba', 'path' => 'images/plushies/kucing-boba.svg'],
+                            ['label' => '🦊 Rubah Pastel', 'path' => 'images/plushies/rubah-pastel.svg'],
+                            ['label' => '🎓 Beruang Wisuda', 'path' => 'images/plushies/beruang-wisuda.svg'],
+                            ['label' => '🌸 Buket Boneka', 'path' => 'images/plushies/buket-boneka.svg'],
+                            ['label' => '🐕 Bantal Shiba', 'path' => 'images/plushies/bantal-shiba.svg'],
+                        ];
+                    @endphp
+                    @foreach($presets as $pr)
+                        <button type="button" onclick="document.getElementById('image_url').value = '{{ $pr['path'] }}'"
+                            class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-pink-50 hover:bg-pink-100 text-pink-700 border border-pink-200 transition-colors">
+                            {{ $pr['label'] }}
+                        </button>
+                    @endforeach
+                </div>
+                @error('image_url')
+                    <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Buttons -->

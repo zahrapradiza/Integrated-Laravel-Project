@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class AuthController extends Controller
@@ -29,10 +30,54 @@ class AuthController extends Controller
     }
 
     /**
-     * Process login authentication with portal role verification.
+     * Process login authentication with passwordless Customer portal and credentials for Staff/Admin.
      */
     public function login(Request $request): RedirectResponse
     {
+        $portalRole = $request->input('portal_role');
+
+        // 1. Passwordless Customer Login Flow
+        if ($portalRole === 'customer') {
+            $validated = $request->validate([
+                'email' => ['required', 'email'],
+                'name' => ['nullable', 'string', 'max:150'],
+                'password' => ['nullable', 'string'],
+            ], [
+                'email.required' => 'Email wajib diisi.',
+                'email.email' => 'Format email tidak valid.',
+            ]);
+
+            $user = User::where('email', $validated['email'])->first();
+
+            if ($user) {
+                // If user is Admin or Staff, require regular password portal
+                if (! $user->isCustomer()) {
+                    return back()->withErrors([
+                        'email' => 'Email ini terdaftar sebagai ' . strtoupper($user->role) . '. Silakan masuk melalui tab ' . ($user->isAdmin() ? 'Administrator' : 'Staff Toko') . ' dengan kata sandi.',
+                    ])->withInput($request->only('email', 'name'))->with('portal', 'customer');
+                }
+
+                if (! empty($validated['name'])) {
+                    $user->update(['name' => $validated['name']]);
+                }
+            } else {
+                // Automatically create new Customer account on first instant login
+                $user = User::create([
+                    'name' => $validated['name'] ?: 'Pelanggan Cantik',
+                    'email' => $validated['email'],
+                    'password' => Hash::make(Str::random(32)),
+                    'role' => 'customer',
+                ]);
+            }
+
+            Auth::login($user, $request->boolean('remember'));
+            $request->session()->regenerate();
+
+            return redirect()->intended(route('dashboard'))
+                ->with('success', "Halo {$user->name}! 💕 Selamat datang di Diza's Plushie, silakan jelajahi koleksi boneka gemas kami!");
+        }
+
+        // 2. Standard Password Login Flow (Staff, Admin, or Automated Tests without portal_role)
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
@@ -44,7 +89,6 @@ class AuthController extends Controller
         ]);
 
         $remember = $request->boolean('remember');
-        $portalRole = $request->input('portal_role');
 
         if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']], $remember)) {
             /** @var User $user */
@@ -67,7 +111,6 @@ class AuthController extends Controller
                     $request->session()->invalidate();
                     $request->session()->regenerateToken();
 
-                    // Specific clear error messages depending on role mismatch
                     if ($user->isCustomer()) {
                         $errorMessage = 'Akun Anda bukan akun Admin/Staff. Silakan masuk melalui tab Portal Customer.';
                     } elseif ($user->isStaff()) {
@@ -96,7 +139,7 @@ class AuthController extends Controller
             }
 
             return redirect()->intended(route('dashboard'))
-                ->with('success', "Selamat datang di BonekaKu, {$user->name}! Silakan jelajahi koleksi boneka kami.");
+                ->with('success', "Selamat datang di Diza's Plushie, {$user->name}! Silakan jelajahi koleksi boneka kami.");
         }
 
         return back()->withErrors([
@@ -140,7 +183,7 @@ class AuthController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => 'customer', // Strictly customer only
+            'role' => 'customer',
             'phone' => $validated['phone'] ?? null,
             'address' => $validated['address'] ?? null,
         ]);
@@ -149,7 +192,7 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         return redirect()->route('dashboard')
-            ->with('success', "Pendaftaran berhasil! Selamat datang di Toko Boneka BonekaKu, {$user->name}.");
+            ->with('success', "Pendaftaran berhasil! Selamat datang di Diza's Plushie, {$user->name}.");
     }
 
     /**
@@ -163,6 +206,6 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login')
-            ->with('success', 'Anda telah berhasil keluar (logout) dari sistem BonekaKu.');
+            ->with('success', "Anda telah berhasil keluar (logout) dari sistem Diza's Plushie.");
     }
 }

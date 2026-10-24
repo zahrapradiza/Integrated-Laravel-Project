@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes - Sistem Inventori & Penjualan Toko Boneka (BonekaKu)
+| Web Routes - Sistem Inventori & Penjualan Toko Boneka (Diza's Plushie)
 |--------------------------------------------------------------------------
 */
 

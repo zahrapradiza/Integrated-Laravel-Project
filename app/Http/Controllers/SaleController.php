@@ -73,7 +73,7 @@ class SaleController extends Controller
         $products = Product::with('category')
             ->where('stock', '>', 0)
             ->orderBy('name', 'asc')
-            ->get(['id', 'sku', 'name', 'size', 'selling_price', 'stock', 'category_id']);
+            ->get(['id', 'sku', 'name', 'size', 'selling_price', 'stock', 'category_id', 'image_url']);
 
         // Load customers for staff / admin dropdown
         $customers = [];
@@ -100,6 +100,7 @@ class SaleController extends Controller
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'customer_id' => ['nullable', 'exists:users,id'],
             'customer_name' => ['nullable', 'string', 'max:150'],
+            'payment_method' => ['nullable', 'string', 'in:QRIS,Transfer Bank,E-Wallet,Tunai / COD'],
             'notes' => ['nullable', 'string', 'max:500'],
         ], [
             'items.required' => 'Pilih minimal 1 jenis boneka untuk ditransaksikan.',
@@ -108,6 +109,7 @@ class SaleController extends Controller
             'items.*.product_id.distinct' => 'Tidak boleh memilih boneka yang sama pada lebih dari satu baris.',
             'items.*.quantity.required' => 'Jumlah kuantitas pembelian wajib diisi.',
             'items.*.quantity.min' => 'Kuantitas minimal adalah 1 pcs.',
+            'payment_method.in' => 'Metode pembayaran yang dipilih tidak valid.',
         ]);
 
         // Determine Customer ID & Customer Name
@@ -150,6 +152,8 @@ class SaleController extends Controller
                     'sale_number' => $saleNumber,
                     'total' => 0,
                     'status' => 'completed',
+                    'payment_method' => $request->payment_method ?: 'QRIS',
+                    'payment_status' => 'paid',
                     'notes' => $request->notes,
                     'sold_at' => now(),
                 ]);
