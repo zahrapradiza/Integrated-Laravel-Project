@@ -271,4 +271,20 @@ class AuthAndRoleTest extends TestCase
         $adminResponse->assertSessionHasErrors('password');
         $this->assertGuest();
     }
+
+    public function test_csrf_token_mismatch_redirects_back_with_friendly_message(): void
+    {
+        \Illuminate\Support\Facades\Route::post('/test-token-mismatch', function () {
+            throw new \Illuminate\Session\TokenMismatchException('CSRF token mismatch.');
+        });
+
+        $response = $this->from('/login')->post('/test-token-mismatch', [
+            'portal_role' => 'customer',
+            'name' => 'Nadia Customer',
+            'email' => 'customer@bonekaku.test',
+        ]);
+
+        $response->assertRedirect('/login');
+        $response->assertSessionHas('error', 'Sesi halaman telah diperbarui, silakan klik tombol Masuk sekali lagi.');
+    }
 }
