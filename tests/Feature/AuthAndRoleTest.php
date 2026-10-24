@@ -15,7 +15,6 @@ class AuthAndRoleTest extends TestCase
     {
         parent::setUp();
 
-        // Seed basic users for testing
         User::create([
             'name' => 'Admin Test',
             'email' => 'admin@bonekaku.test',
@@ -42,9 +41,40 @@ class AuthAndRoleTest extends TestCase
     {
         $response = $this->get('/login');
         $response->assertStatus(200);
-        $response->assertSee('admin@bonekaku.test');
-        $response->assertSee('staff@bonekaku.test');
-        $response->assertSee('customer@bonekaku.test');
+
+        // Verify portal tabs are present
+        $response->assertSee('Pelanggan');
+        $response->assertSee('Staff Toko');
+        $response->assertSee('Administrator');
+        $response->assertSee('Masuk Pelanggan BonekaKu');
+
+        // Verify NO demo credentials or passwords leaked on screen
+        $response->assertDontSee('Akun Demo Siap Pakai');
+        $response->assertDontSee('admin@bonekaku.test');
+        $response->assertDontSee('staff@bonekaku.test');
+        $response->assertDontSee('customer@bonekaku.test');
+    }
+
+    public function test_login_screen_renders_specific_portals(): void
+    {
+        // 1. Staff portal
+        $staffResponse = $this->get('/login?portal=staff');
+        $staffResponse->assertStatus(200);
+        $staffResponse->assertSee('Portal Staff Operasional');
+        $staffResponse->assertSee('Portal Staff Kasir');
+        $staffResponse->assertDontSee('Daftar Akun Customer Sekarang');
+
+        // 2. Admin portal
+        $adminResponse = $this->get('/login?portal=admin');
+        $adminResponse->assertStatus(200);
+        $adminResponse->assertSee('Portal Administrator');
+        $adminResponse->assertDontSee('Daftar Akun Customer Sekarang');
+
+        // 3. Customer portal
+        $customerResponse = $this->get('/login?portal=customer');
+        $customerResponse->assertStatus(200);
+        $customerResponse->assertSee('Masuk Pelanggan BonekaKu');
+        $customerResponse->assertSee('Daftar Akun Customer Sekarang');
     }
 
     public function test_register_screen_can_be_rendered(): void
@@ -123,5 +153,68 @@ class AuthAndRoleTest extends TestCase
         $response->assertRedirect('/login');
         $response->assertSessionHasErrors('email');
         $this->assertGuest();
+    }
+
+    public function test_login_with_mismatched_portal_role_is_rejected(): void
+    {
+        // Customer attempting to login via Admin Portal
+        $response = $this->from('/login?portal=admin')->post('/login', [
+            'email' => 'customer@bonekaku.test',
+            'password' => 'password123',
+            'portal_role' => 'admin',
+        ]);
+
+        $response->assertRedirect('/login?portal=admin');
+        $response->assertSessionHasErrors([
+            'email' => 'Akun Anda bukan akun Admin/Staff. Silakan masuk melalui tab Portal Customer.',
+        ]);
+        $this->assertGuest();
+
+        // Staff attempting to login via Admin Portal
+        $staffResponse = $this->from('/login?portal=admin')->post('/login', [
+            'email' => 'staff@bonekaku.test',
+            'password' => 'password123',
+            'portal_role' => 'admin',
+        ]);
+
+        $staffResponse->assertRedirect('/login?portal=admin');
+        $staffResponse->assertSessionHasErrors([
+            'email' => 'Akun Anda bukan akun Administrator. Silakan masuk melalui tab Portal Staff.',
+        ]);
+        $this->assertGuest();
+    }
+
+    public function test_login_with_matching_portal_role_succeeds(): void
+    {
+        // Customer logging in through Customer Portal
+        $customerResponse = $this->post('/login', [
+            'email' => 'customer@bonekaku.test',
+            'password' => 'password123',
+            'portal_role' => 'customer',
+        ]);
+        $customerResponse->assertRedirect('/dashboard');
+        $this->assertAuthenticated();
+
+        auth()->logout();
+
+        // Staff logging in through Staff Portal
+        $staffResponse = $this->post('/login', [
+            'email' => 'staff@bonekaku.test',
+            'password' => 'password123',
+            'portal_role' => 'staff',
+        ]);
+        $staffResponse->assertRedirect('/dashboard');
+        $this->assertAuthenticated();
+
+        auth()->logout();
+
+        // Admin logging in through Admin Portal
+        $adminResponse = $this->post('/login', [
+            'email' => 'admin@bonekaku.test',
+            'password' => 'password123',
+            'portal_role' => 'admin',
+        ]);
+        $adminResponse->assertRedirect('/dashboard');
+        $this->assertAuthenticated();
     }
 }

@@ -1,26 +1,110 @@
-@extends('layouts.app', ['title' => 'Masuk ke Sistem BonekaKu'])
+@php
+    $activePortal = old('portal_role', $portal ?? request('portal', 'customer'));
+    if (!in_array($activePortal, ['customer', 'staff', 'admin'])) {
+        $activePortal = 'customer';
+    }
+@endphp
+
+@extends('layouts.app', ['title' => 'Portal Masuk - BonekaKu'])
 
 @section('content')
-<div class="max-w-4xl mx-auto py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<div class="max-w-xl mx-auto py-8 sm:py-12 px-4">
 
-        <!-- Login Form Card -->
-        <div class="lg:col-span-7 bg-white p-8 rounded-3xl border border-slate-200 shadow-xl shadow-slate-100">
-            <div class="mb-6">
-                <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-plush-100 text-plush-600 mb-4 shadow-sm">
-                    <i class="fa-solid fa-lock text-xl"></i>
-                </div>
-                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Selamat Datang Kembali!</h1>
-                <p class="text-slate-500 text-sm mt-1">Silakan masukkan email dan password untuk masuk ke akun Anda.</p>
+    <!-- Role Portal Selector Tabs -->
+    <div class="bg-white p-1.5 rounded-2xl border border-slate-200/90 shadow-sm flex items-center justify-between mb-6 gap-1" id="portalTabs">
+        <!-- Customer Tab -->
+        <a href="{{ route('login', ['portal' => 'customer']) }}"
+           data-portal="customer"
+           class="portal-tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold text-center transition-all flex items-center justify-center space-x-1.5 {{ $activePortal === 'customer' ? 'bg-rose-500 text-white shadow-md shadow-rose-500/25' : 'text-slate-600 hover:text-rose-600 hover:bg-rose-50/50' }}">
+            <i class="fa-solid fa-heart {{ $activePortal === 'customer' ? 'text-white' : 'text-rose-400' }}"></i>
+            <span>Pelanggan</span>
+        </a>
+
+        <!-- Staff Tab -->
+        <a href="{{ route('login', ['portal' => 'staff']) }}"
+           data-portal="staff"
+           class="portal-tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold text-center transition-all flex items-center justify-center space-x-1.5 {{ $activePortal === 'staff' ? 'bg-amber-500 text-white shadow-md shadow-amber-500/25' : 'text-slate-600 hover:text-amber-600 hover:bg-amber-50/50' }}">
+            <i class="fa-solid fa-user-gear {{ $activePortal === 'staff' ? 'text-white' : 'text-amber-500' }}"></i>
+            <span>Staff Toko</span>
+        </a>
+
+        <!-- Admin Tab -->
+        <a href="{{ route('login', ['portal' => 'admin']) }}"
+           data-portal="admin"
+           class="portal-tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold text-center transition-all flex items-center justify-center space-x-1.5 {{ $activePortal === 'admin' ? 'bg-slate-900 text-white shadow-md shadow-slate-900/25' : 'text-slate-600 hover:text-indigo-600 hover:bg-indigo-50/50' }}">
+            <i class="fa-solid fa-shield-halved {{ $activePortal === 'admin' ? 'text-indigo-300' : 'text-indigo-500' }}"></i>
+            <span>Administrator</span>
+        </a>
+    </div>
+
+    <!-- Main Login Card Container -->
+    <div id="loginCard" class="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden transition-all duration-300">
+
+        <!-- Role-Specific Card Header -->
+        <div id="headerBanner" class="p-6 sm:p-8 border-b border-slate-100 transition-colors duration-300
+            @if($activePortal === 'customer') bg-gradient-to-br from-rose-50/70 via-pink-50/30 to-white
+            @elseif($activePortal === 'staff') bg-gradient-to-br from-amber-50/70 via-orange-50/30 to-white
+            @else bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white
+            @endif">
+
+            <div class="flex items-center justify-between mb-4">
+                <span id="badgeRole" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider
+                    @if($activePortal === 'customer') bg-rose-100 text-rose-700 border border-rose-200
+                    @elseif($activePortal === 'staff') bg-amber-100 text-amber-800 border border-amber-300
+                    @else bg-indigo-500/20 text-indigo-300 border border-indigo-400/30
+                    @endif">
+                    <i id="badgeIcon" class="mr-1.5
+                        @if($activePortal === 'customer') fa-solid fa-heart
+                        @elseif($activePortal === 'staff') fa-solid fa-user-gear
+                        @else fa-solid fa-shield-halved
+                        @endif"></i>
+                    <span id="badgeText">
+                        @if($activePortal === 'customer') Portal Pelanggan
+                        @elseif($activePortal === 'staff') Portal Staff Kasir & Gudang
+                        @else Portal Administrator & Owner
+                        @endif
+                    </span>
+                </span>
+
+                <span class="text-xs font-mono {{ $activePortal === 'admin' ? 'text-indigo-300/80' : 'text-slate-400' }}">
+                    BonekaKu Auth
+                </span>
             </div>
 
-            <form action="{{ route('login') }}" method="POST" class="space-y-5">
+            <!-- Title & Subtitle -->
+            <h1 id="portalTitle" class="text-2xl sm:text-3xl font-black tracking-tight {{ $activePortal === 'admin' ? 'text-white' : 'text-slate-900' }}">
+                @if($activePortal === 'customer')
+                    Masuk Pelanggan BonekaKu
+                @elseif($activePortal === 'staff')
+                    Portal Staff Operasional
+                @else
+                    Portal Administrator & Owner
+                @endif
+            </h1>
+
+            <p id="portalSubtitle" class="text-xs sm:text-sm mt-1.5 {{ $activePortal === 'admin' ? 'text-slate-300' : 'text-slate-500' }}">
+                @if($activePortal === 'customer')
+                    Belanja boneka favoritmu dan pantau pesanan dengan mudah.
+                @elseif($activePortal === 'staff')
+                    Masuk khusus petugas kasir penjualan (Stock-Out) dan penerimaan stok gudang (Stock-In).
+                @else
+                    Akses manajemen master data, laporan keuangan, dan otorisasi sistem.
+                @endif
+            </p>
+        </div>
+
+        <!-- Login Form Body -->
+        <div class="p-6 sm:p-8">
+            <form action="{{ route('login') }}" method="POST" class="space-y-5" id="loginForm">
                 @csrf
+
+                <!-- Hidden Portal Role Input -->
+                <input type="hidden" name="portal_role" id="portal_role" value="{{ $activePortal }}">
 
                 <!-- Email Input -->
                 <div>
-                    <label for="email" class="block text-sm font-bold text-slate-700 mb-1.5">
-                        Alamat Email <span class="text-rose-500">*</span>
+                    <label for="email" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-1.5">
+                        Alamat Email Akun <span class="text-rose-500">*</span>
                     </label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
@@ -28,15 +112,15 @@
                         </span>
                         <input type="email" name="email" id="email" required autofocus
                             value="{{ old('email') }}"
-                            placeholder="nama@bonekaku.test"
-                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-plush-500 focus:border-plush-500 text-sm transition-all bg-slate-50/50 hover:bg-white focus:bg-white">
+                            placeholder="nama@email.com"
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm transition-all bg-slate-50/50 hover:bg-white focus:bg-white focus:ring-2 focus:ring-slate-900 focus:border-slate-900">
                     </div>
                 </div>
 
                 <!-- Password Input -->
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label for="password" class="block text-sm font-bold text-slate-700">
+                        <label for="password" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
                             Kata Sandi (Password) <span class="text-rose-500">*</span>
                         </label>
                     </div>
@@ -45,115 +129,202 @@
                             <i class="fa-solid fa-key"></i>
                         </span>
                         <input type="password" name="password" id="password" required
-                            placeholder="••••••••"
-                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-plush-500 focus:border-plush-500 text-sm transition-all bg-slate-50/50 hover:bg-white focus:bg-white">
+                            placeholder="Masukkan password akun Anda"
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm transition-all bg-slate-50/50 hover:bg-white focus:bg-white focus:ring-2 focus:ring-slate-900 focus:border-slate-900">
                     </div>
                 </div>
 
-                <!-- Remember Me -->
-                <div class="flex items-center justify-between text-sm">
+                <!-- Remember Me Checkbox -->
+                <div class="flex items-center justify-between text-xs sm:text-sm">
                     <label class="flex items-center cursor-pointer select-none">
-                        <input type="checkbox" name="remember" class="w-4 h-4 rounded text-plush-600 focus:ring-plush-500 border-slate-300">
-                        <span class="ml-2 text-slate-600 font-medium">Ingat Saya di Perangkat Ini</span>
+                        <input type="checkbox" name="remember" class="w-4 h-4 rounded text-slate-900 focus:ring-slate-900 border-slate-300">
+                        <span class="ml-2 text-slate-600 font-medium">Ingat saya di perangkat ini</span>
                     </label>
                 </div>
 
                 <!-- Submit Button -->
                 <div>
-                    <button type="submit" class="w-full py-3 px-4 rounded-xl bg-plush-600 hover:bg-plush-700 active:bg-plush-800 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
-                        <span>Masuk ke Sistem</span>
+                    <button type="submit" id="submitBtn"
+                        class="w-full py-3 px-4 rounded-xl font-extrabold text-sm text-white shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center space-x-2
+                        @if($activePortal === 'customer') bg-rose-600 hover:bg-rose-700 active:bg-rose-800 shadow-rose-500/20
+                        @elseif($activePortal === 'staff') bg-amber-600 hover:bg-amber-700 active:bg-amber-800 shadow-amber-500/20
+                        @else bg-slate-900 hover:bg-slate-800 active:bg-black shadow-slate-900/25
+                        @endif">
+                        <i id="btnIcon" class="
+                            @if($activePortal === 'customer') fa-solid fa-arrow-right-to-bracket
+                            @elseif($activePortal === 'staff') fa-solid fa-cash-register
+                            @else fa-solid fa-shield-halved
+                            @endif"></i>
+                        <span id="btnText">
+                            @if($activePortal === 'customer') Masuk Akun Pelanggan
+                            @elseif($activePortal === 'staff') Masuk Portal Staff
+                            @else Masuk Panel Administrator
+                            @endif
+                        </span>
                     </button>
                 </div>
 
-                <!-- Register Customer Link -->
-                <div class="pt-4 border-t border-slate-100 text-center text-sm text-slate-500">
-                    Belum punya akun pembeli?
-                    <a href="{{ route('register') }}" class="font-bold text-plush-600 hover:text-plush-700 hover:underline">
-                        Daftar Akun Customer Sekarang
-                    </a>
+                <!-- Role-Specific Bottom Notice / Registration Link -->
+                <div id="footerNotice" class="pt-4 border-t border-slate-100">
+                    @if($activePortal === 'customer')
+                        <!-- Customer Mode: Show Register Link -->
+                        <div id="customerNotice" class="text-center text-xs sm:text-sm text-slate-500">
+                            Belum punya akun pembeli?
+                            <a href="{{ route('register') }}" class="font-extrabold text-rose-600 hover:text-rose-700 hover:underline">
+                                Daftar Akun Customer Sekarang
+                            </a>
+                        </div>
+                    @elseif($activePortal === 'staff')
+                        <!-- Staff Mode: Hide Register Link -->
+                        <div id="staffNotice" class="text-center text-xs text-slate-500 flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-circle-info text-amber-500 text-sm"></i>
+                            <span>Akses internal petugas kasir & gudang. Pendaftaran staf dikelola langsung oleh Administrator.</span>
+                        </div>
+                    @else
+                        <!-- Admin Mode: Hide Register Link -->
+                        <div id="adminNotice" class="text-center text-xs text-slate-500 flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-lock text-indigo-500 text-sm"></i>
+                            <span>Akses terproteksi tingkat tinggi khusus Pemilik Toko & Administrator sistem.</span>
+                        </div>
+                    @endif
                 </div>
             </form>
         </div>
 
-        <!-- Demo Accounts Card for Quick Lecturer Testing -->
-        <div class="lg:col-span-5 space-y-4">
-            <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 rounded-3xl shadow-xl relative overflow-hidden border border-slate-700">
-                <div class="absolute -right-6 -bottom-6 text-slate-800/40 text-8xl pointer-events-none">
-                    <i class="fa-solid fa-clipboard-check"></i>
-                </div>
-
-                <div class="relative z-10">
-                    <div class="flex items-center space-x-2 text-amber-400 mb-2">
-                        <i class="fa-solid fa-circle-info text-base"></i>
-                        <span class="text-xs font-bold uppercase tracking-wider">Info Pengujian Dosen / Demo</span>
-                    </div>
-                    <h2 class="text-lg font-bold text-white mb-2">Akun Demo Siap Pakai</h2>
-                    <p class="text-slate-300 text-xs mb-4">
-                        Klik tombol <strong>Gunakan</strong> pada masing-masing role di bawah untuk mengisi form login secara otomatis:
-                    </p>
-
-                    <div class="space-y-3">
-                        <!-- Admin Account -->
-                        <div class="p-3 rounded-2xl bg-slate-800/80 border border-purple-500/30 flex items-center justify-between">
-                            <div>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-purple-500/20 text-purple-300 border border-purple-500/40">ADMIN</span>
-                                <p class="text-sm font-semibold text-white mt-1">admin@bonekaku.test</p>
-                                <p class="text-xs text-slate-400">Password: <code class="text-amber-300">password123</code></p>
-                            </div>
-                            <button type="button" onclick="fillLogin('admin@bonekaku.test', 'password123')" class="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-colors">
-                                Gunakan
-                            </button>
-                        </div>
-
-                        <!-- Staff Account -->
-                        <div class="p-3 rounded-2xl bg-slate-800/80 border border-amber-500/30 flex items-center justify-between">
-                            <div>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-500/40">STAFF</span>
-                                <p class="text-sm font-semibold text-white mt-1">staff@bonekaku.test</p>
-                                <p class="text-xs text-slate-400">Password: <code class="text-amber-300">password123</code></p>
-                            </div>
-                            <button type="button" onclick="fillLogin('staff@bonekaku.test', 'password123')" class="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition-colors">
-                                Gunakan
-                            </button>
-                        </div>
-
-                        <!-- Customer Account -->
-                        <div class="p-3 rounded-2xl bg-slate-800/80 border border-rose-500/30 flex items-center justify-between">
-                            <div>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-500/20 text-rose-300 border border-rose-500/40">CUSTOMER</span>
-                                <p class="text-sm font-semibold text-white mt-1">customer@bonekaku.test</p>
-                                <p class="text-xs text-slate-400">Password: <code class="text-amber-300">password123</code></p>
-                            </div>
-                            <button type="button" onclick="fillLogin('customer@bonekaku.test', 'password123')" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-colors">
-                                Gunakan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Features Summary Note -->
-            <div class="p-5 rounded-3xl bg-white border border-slate-200 text-xs text-slate-600 space-y-2">
-                <div class="font-bold text-slate-800 flex items-center space-x-1.5">
-                    <i class="fa-solid fa-shield-halved text-plush-600"></i>
-                    <span>Hak Akses Terproteksi Server-Side:</span>
-                </div>
-                <ul class="list-disc list-inside space-y-1 text-slate-500 pl-1">
-                    <li><strong class="text-slate-700">Admin:</strong> Kelola User/Role, CRUD Produk/Supplier/Kategori, Batal Transaksi, Laporan Penuh.</li>
-                    <li><strong class="text-slate-700">Staff:</strong> Read Produk/Supplier/Kategori, Transaksi Jual/Beli (Tanpa hak Batal/User).</li>
-                    <li><strong class="text-slate-700">Customer:</strong> Akses Katalog Boneka, Riwayat Belanja Saya.</li>
-                </ul>
-            </div>
-        </div>
-
     </div>
+
+    <!-- Security & Testing Notice -->
+    <div class="mt-6 text-center text-xs text-slate-400">
+        <p>Aplikasi Toko BonekaKu &bull; Sistem Inventori & Penjualan Terintegrasi</p>
+        <p class="mt-1 text-[11px] text-slate-400/80">Kredensial akun demo pengujian dosen tertera pada dokumentasi <code class="text-slate-600 font-mono">README.md</code>.</p>
+    </div>
+
 </div>
 
+<!-- Client-side Interactive Tab Switching -->
 <script>
-    function fillLogin(email, password) {
-        document.getElementById('email').value = email;
-        document.getElementById('password').value = password;
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const portalConfigs = {
+            customer: {
+                title: 'Masuk Pelanggan BonekaKu',
+                subtitle: 'Belanja boneka favoritmu dan pantau pesanan dengan mudah.',
+                badgeText: 'Portal Pelanggan',
+                badgeIcon: 'fa-solid fa-heart',
+                badgeClass: 'bg-rose-100 text-rose-700 border border-rose-200',
+                bannerClass: 'p-6 sm:p-8 border-b border-slate-100 bg-gradient-to-br from-rose-50/70 via-pink-50/30 to-white text-slate-900',
+                titleClass: 'text-2xl sm:text-3xl font-black tracking-tight text-slate-900',
+                subtitleClass: 'text-xs sm:text-sm mt-1.5 text-slate-500',
+                btnText: 'Masuk Akun Pelanggan',
+                btnIcon: 'fa-solid fa-arrow-right-to-bracket',
+                btnClass: 'w-full py-3 px-4 rounded-xl font-extrabold text-sm text-white shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center space-x-2 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 shadow-rose-500/20'
+            },
+            staff: {
+                title: 'Portal Staff Operasional',
+                subtitle: 'Masuk khusus petugas kasir penjualan (Stock-Out) dan penerimaan stok gudang (Stock-In).',
+                badgeText: 'Portal Staff Kasir & Gudang',
+                badgeIcon: 'fa-solid fa-user-gear',
+                badgeClass: 'bg-amber-100 text-amber-800 border border-amber-300',
+                bannerClass: 'p-6 sm:p-8 border-b border-slate-100 bg-gradient-to-br from-amber-50/70 via-orange-50/30 to-white text-slate-900',
+                titleClass: 'text-2xl sm:text-3xl font-black tracking-tight text-slate-900',
+                subtitleClass: 'text-xs sm:text-sm mt-1.5 text-slate-500',
+                btnText: 'Masuk Portal Staff',
+                btnIcon: 'fa-solid fa-cash-register',
+                btnClass: 'w-full py-3 px-4 rounded-xl font-extrabold text-sm text-white shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center space-x-2 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 shadow-amber-500/20'
+            },
+            admin: {
+                title: 'Portal Administrator & Owner',
+                subtitle: 'Akses manajemen master data, laporan keuangan, dan otorisasi sistem.',
+                badgeText: 'Portal Administrator & Owner',
+                badgeIcon: 'fa-solid fa-shield-halved',
+                badgeClass: 'bg-indigo-500/20 text-indigo-300 border border-indigo-400/30',
+                bannerClass: 'p-6 sm:p-8 border-b border-slate-100 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white',
+                titleClass: 'text-2xl sm:text-3xl font-black tracking-tight text-white',
+                subtitleClass: 'text-xs sm:text-sm mt-1.5 text-slate-300',
+                btnText: 'Masuk Panel Administrator',
+                btnIcon: 'fa-solid fa-shield-halved',
+                btnClass: 'w-full py-3 px-4 rounded-xl font-extrabold text-sm text-white shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center space-x-2 bg-slate-900 hover:bg-slate-800 active:bg-black shadow-slate-900/25'
+            }
+        };
+
+        const tabButtons = document.querySelectorAll('.portal-tab-btn');
+        const portalRoleInput = document.getElementById('portal_role');
+        const headerBanner = document.getElementById('headerBanner');
+        const badgeRole = document.getElementById('badgeRole');
+        const badgeIcon = document.getElementById('badgeIcon');
+        const badgeText = document.getElementById('badgeText');
+        const portalTitle = document.getElementById('portalTitle');
+        const portalSubtitle = document.getElementById('portalSubtitle');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnIcon = document.getElementById('btnIcon');
+        const btnText = document.getElementById('btnText');
+
+        const customerNotice = document.getElementById('customerNotice');
+        const staffNotice = document.getElementById('staffNotice');
+        const adminNotice = document.getElementById('adminNotice');
+
+        function switchPortal(role) {
+            if (!portalConfigs[role]) return;
+            const cfg = portalConfigs[role];
+
+            // Update Hidden Input
+            portalRoleInput.value = role;
+
+            // Update URL query string without reloading
+            if (window.history && window.history.replaceState) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('portal', role);
+                window.history.replaceState(null, '', url.toString());
+            }
+
+            // Update Tab Buttons UI
+            tabButtons.forEach(btn => {
+                const bRole = btn.getAttribute('data-portal');
+                if (bRole === role) {
+                    if (role === 'customer') {
+                        btn.className = 'portal-tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold text-center transition-all flex items-center justify-center space-x-1.5 bg-rose-500 text-white shadow-md shadow-rose-500/25';
+                    } else if (role === 'staff') {
+                        btn.className = 'portal-tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold text-center transition-all flex items-center justify-center space-x-1.5 bg-amber-500 text-white shadow-md shadow-amber-500/25';
+                    } else {
+                        btn.className = 'portal-tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold text-center transition-all flex items-center justify-center space-x-1.5 bg-slate-900 text-white shadow-md shadow-slate-900/25';
+                    }
+                } else {
+                    btn.className = 'portal-tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold text-center transition-all flex items-center justify-center space-x-1.5 text-slate-600 hover:bg-slate-100/60';
+                }
+            });
+
+            // Update Header & Content
+            headerBanner.className = cfg.bannerClass;
+            badgeRole.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ' + cfg.badgeClass;
+            badgeIcon.className = cfg.badgeIcon + ' mr-1.5';
+            badgeText.textContent = cfg.badgeText;
+            portalTitle.textContent = cfg.title;
+            portalTitle.className = cfg.titleClass;
+            portalSubtitle.textContent = cfg.subtitle;
+            portalSubtitle.className = cfg.subtitleClass;
+
+            // Update Submit Button
+            submitBtn.className = cfg.btnClass;
+            btnIcon.className = cfg.btnIcon;
+            btnText.textContent = cfg.btnText;
+
+            // Update Bottom Notice
+            customerNotice.classList.toggle('hidden', role !== 'customer');
+            customerNotice.classList.toggle('block', role === 'customer');
+
+            staffNotice.classList.toggle('hidden', role !== 'staff');
+            staffNotice.classList.toggle('block', role === 'staff');
+
+            adminNotice.classList.toggle('hidden', role !== 'admin');
+            adminNotice.classList.toggle('block', role === 'admin');
+        }
+
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const selectedRole = this.getAttribute('data-portal');
+                switchPortal(selectedRole);
+            });
+        });
+    });
 </script>
 @endsection
