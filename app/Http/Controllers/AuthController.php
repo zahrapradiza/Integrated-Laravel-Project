@@ -67,11 +67,12 @@ class AuthController extends Controller
         if ($portalRole === 'customer') {
             $validated = $request->validate([
                 'email' => ['required', 'email'],
-                'name' => ['nullable', 'string', 'max:150'],
+                'name' => ['required', 'string', 'max:150'],
                 'password' => ['nullable', 'string'],
             ], [
                 'email.required' => 'Email wajib diisi.',
                 'email.email' => 'Format email tidak valid.',
+                'name.required' => 'Nama panggilan / lengkap wajib diisi.',
             ]);
 
             $user = User::where('email', $validated['email'])->first();
@@ -85,13 +86,15 @@ class AuthController extends Controller
                     ])->withInput($request->only('email', 'name'))->with('portal', 'customer');
                 }
 
-                if (! empty($validated['name'])) {
+                // If existing account name differs from current login name,
+                // update to the current customer's name so their identity is isolated
+                if ($user->name !== $validated['name']) {
                     $user->update(['name' => $validated['name']]);
                 }
             } else {
                 // Automatically create new Customer account on first instant login
                 $user = User::create([
-                    'name' => $validated['name'] ?: 'Pelanggan Cantik',
+                    'name' => $validated['name'],
                     'email' => $validated['email'],
                     'password' => Hash::make(Str::random(32)),
                     'role' => 'customer',

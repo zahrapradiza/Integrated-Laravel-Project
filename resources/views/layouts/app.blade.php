@@ -109,7 +109,7 @@
                             <i class="fa-solid fa-store mr-1.5 text-xs"></i> Katalog Boneka
                         </a>
                         <a href="{{ route('sales.index') }}" class="px-3.5 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('sales.*') ? 'bg-emerald-100/80 text-emerald-800' : 'text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/50' }}">
-                            <i class="fa-solid fa-bag-shopping mr-1.5 text-xs"></i> Pesanan Saya
+                            <i class="fa-solid fa-bag-shopping mr-1.5 text-xs"></i> Riwayat Pesanan Saya
                         </a>
                         <a href="{{ route('sales.create') }}" class="px-3.5 py-2 rounded-xl text-sm font-bold bg-rose-500 hover:bg-rose-600 text-white shadow-sm transition-all">
                             <i class="fa-solid fa-cart-plus mr-1.5 text-xs"></i> Pesan Boneka

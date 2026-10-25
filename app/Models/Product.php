@@ -25,6 +25,19 @@ class Product extends Model
         'minimum_stock',
     ];
 
+    protected $appends = [
+        'image_asset_url',
+    ];
+
+    /**
+     * Get the verified asset URL for the product image.
+     */
+    public function getImageAssetUrlAttribute(): string
+    {
+        $path = $this->image_url ? ltrim($this->image_url, '/') : 'images/plushies/teddy-bear-pita.jpg';
+        return asset($path);
+    }
+
     protected function casts(): array
     {
         return [

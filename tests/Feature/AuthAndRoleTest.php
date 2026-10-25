@@ -127,7 +127,7 @@ class AuthAndRoleTest extends TestCase
         $customer = User::where('role', 'customer')->first();
         $response = $this->actingAs($customer)->get('/dashboard');
         $response->assertStatus(200);
-        $response->assertSee('Pesanan Saya');
+        $response->assertSee('Riwayat Pesanan Saya');
     }
 
     public function test_user_can_login_with_valid_credentials(): void
@@ -157,6 +157,7 @@ class AuthAndRoleTest extends TestCase
     {
         // Customer attempting to login via Admin Portal
         $response = $this->from('/admin/login')->post('/login', [
+            'name' => 'Customer Test',
             'email' => 'customer@bonekaku.test',
             'password' => 'password123',
             'portal_role' => 'admin',
@@ -182,6 +183,7 @@ class AuthAndRoleTest extends TestCase
     {
         // Customer logging in through Customer Portal
         $customerResponse = $this->post('/login', [
+            'name' => 'Customer Test',
             'email' => 'customer@bonekaku.test',
             'password' => 'password123',
             'portal_role' => 'customer',
@@ -210,6 +212,65 @@ class AuthAndRoleTest extends TestCase
         ]);
         $adminResponse->assertRedirect('/dashboard');
         $this->assertAuthenticated();
+    }
+
+    public function test_customer_login_requires_name(): void
+    {
+        $response = $this->post('/login', [
+            'portal_role' => 'customer',
+            'email' => 'customer@bonekaku.test',
+            'name' => '',
+        ]);
+
+        $response->assertSessionHasErrors('name');
+        $this->assertGuest();
+    }
+
+    public function test_customer_login_with_new_name_updates_account_and_isolates_orders(): void
+    {
+        $customer = User::where('role', 'customer')->first();
+
+        // Previous sale under old customer name
+        \App\Models\Sale::create([
+            'user_id' => $customer->id,
+            'customer_id' => $customer->id,
+            'customer_name' => 'Customer Test',
+            'sale_number' => 'INV-20261026-0001',
+            'total' => 100000,
+            'status' => 'completed',
+            'sold_at' => now(),
+        ]);
+
+        // Customer logs in with a new name "Zahra" using the same email
+        $response = $this->post('/login', [
+            'portal_role' => 'customer',
+            'name' => 'Zahra',
+            'email' => $customer->email,
+        ]);
+
+        $response->assertRedirect('/dashboard');
+        $this->assertAuthenticated();
+        $this->assertEquals('Zahra', auth()->user()->fresh()->name);
+
+        // When viewing sales index, Zahra cannot see Nadia's / old customer's sale
+        $salesResponse = $this->get('/sales');
+        $salesResponse->assertStatus(200);
+        $salesResponse->assertSee('Riwayat Pesanan Saya');
+        $salesResponse->assertDontSee('INV-20261026-0001');
+
+        // When Zahra makes an order, it appears in her history
+        \App\Models\Sale::create([
+            'user_id' => $customer->id,
+            'customer_id' => $customer->id,
+            'customer_name' => 'Zahra',
+            'sale_number' => 'INV-20261026-0002',
+            'total' => 150000,
+            'status' => 'completed',
+            'sold_at' => now(),
+        ]);
+
+        $salesResponse2 = $this->get('/sales');
+        $salesResponse2->assertSee('INV-20261026-0002');
     }
 
     public function test_customer_can_login_without_password(): void

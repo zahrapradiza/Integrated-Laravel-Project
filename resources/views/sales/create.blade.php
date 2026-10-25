@@ -216,6 +216,7 @@
 <!-- JavaScript Multi-Item Row Logic with Plushie Thumbnails -->
 <script>
     const availableProducts = @json($products);
+    const defaultPlushieImg = "{{ asset('images/plushies/teddy-bear-pita.jpg') }}";
     let rowIndex = 0;
 
     function formatRupiah(number) {
@@ -229,8 +230,8 @@
         let optionsHtml = '<option value="">-- Pilih Koleksi Boneka --</option>';
         availableProducts.forEach(p => {
             const isSelected = p.id == selectedProductId ? 'selected' : '';
-            const imgPath = p.image_url || '/images/plushies/teddy-bear-pita.jpg';
-            optionsHtml += `<option value="${p.id}" data-price="${p.selling_price}" data-stock="${p.stock}" data-img="${imgPath}" ${isSelected}>
+            const imgPath = p.image_asset_url || (p.image_url ? ("{{ asset('') }}" + p.image_url.replace(/^\//, '')) : defaultPlushieImg);
+            optionsHtml += `<option value="${p.id}" data-price="${p.selling_price}" data-stock="${p.stock}" data-image="${imgPath}" data-img="${imgPath}" ${isSelected}>
                 ${p.name} (${p.size || 'Standard'}) - Sisa: ${p.stock} pcs
             </option>`;
         });
@@ -238,7 +239,7 @@
         tr.innerHTML = `
             <td class="px-4 py-3">
                 <div class="flex items-center space-x-2.5">
-                    <img src="/images/plushies/teddy-bear-pita.jpg" class="row-thumb w-12 h-12 rounded-xl object-cover bg-pink-50 border border-pink-100 shrink-0 shadow-xs" alt="Thumbnail">
+                    <img src="${defaultPlushieImg}" onerror="this.onerror=null; this.src='${defaultPlushieImg}';" class="row-thumb w-12 h-12 rounded-xl object-cover object-center bg-pink-50 border border-pink-100 shrink-0 shadow-xs" alt="Thumb">
                     <div class="flex-1">
                         <select name="items[${rowIndex}][product_id]" required
                             class="product-select w-full px-3 py-2 rounded-xl border border-pink-200 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-rose-400 focus:border-rose-400 bg-white">
@@ -275,12 +276,12 @@
         const removeBtn = tr.querySelector('.remove-row-btn');
         const thumb = tr.querySelector('.row-thumb');
 
-        select.addEventListener('change', () => {
+        function updateRowFromSelection() {
             const selectedOpt = select.options[select.selectedIndex];
             if (selectedOpt && selectedOpt.value) {
                 const stock = parseInt(selectedOpt.getAttribute('data-stock')) || 0;
                 const price = parseFloat(selectedOpt.getAttribute('data-price')) || 0;
-                const img = selectedOpt.getAttribute('data-img') || '/images/plushies/teddy-bear-pita.jpg';
+                const img = selectedOpt.getAttribute('data-image') || selectedOpt.getAttribute('data-img') || defaultPlushieImg;
                 tr.querySelector('.stock-cell').textContent = `${stock} pcs`;
                 tr.querySelector('.price-display').textContent = formatRupiah(price);
                 thumb.src = img;
@@ -288,11 +289,12 @@
             } else {
                 tr.querySelector('.stock-cell').textContent = '-';
                 tr.querySelector('.price-display').textContent = 'Rp 0';
-                thumb.src = '/images/plushies/teddy-bear-pita.jpg';
+                thumb.src = defaultPlushieImg;
             }
             validateAndCalculateRow(tr);
-        });
+        }
 
+        select.addEventListener('change', updateRowFromSelection);
         qtyInput.addEventListener('input', () => validateAndCalculateRow(tr));
 
         removeBtn.addEventListener('click', () => {
@@ -306,10 +308,12 @@
         });
 
         if (selectedProductId) {
-            select.dispatchEvent(new Event('change'));
+            select.value = selectedProductId;
+            updateRowFromSelection();
+        } else {
+            updateRowFromSelection();
         }
 
-        validateAndCalculateRow(tr);
         rowIndex++;
     }
 
@@ -348,14 +352,19 @@
     document.getElementById('addRowBtn').addEventListener('click', () => addRow());
 
     // Restore old inputs if validation error occurred
-    const oldItems = @json(old('items', []));
-    if (oldItems && oldItems.length > 0) {
-        oldItems.forEach(item => {
-            addRow(item.product_id, item.quantity);
-        });
-    } else {
-        // Initialize with 1 empty row
-        addRow();
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const oldItems = @json(old('items', []));
+        const selectedProductIdFromQuery = @json($selectedProductId ?? request()->query('product_id'));
+        if (oldItems && oldItems.length > 0) {
+            oldItems.forEach(item => {
+                addRow(item.product_id, item.quantity);
+            });
+        } else if (selectedProductIdFromQuery) {
+            addRow(selectedProductIdFromQuery, 1);
+        } else {
+            // Initialize with 1 empty row
+            addRow();
+        }
+    });
 </script>
 @endsection

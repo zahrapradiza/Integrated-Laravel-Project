@@ -8,17 +8,6 @@
 
         <!-- Soft Pink Pastel Header Banner -->
         <div class="p-6 sm:p-8 border-b border-pink-100/60 bg-gradient-to-br from-pink-50 via-rose-50/40 to-white text-slate-800">
-            <div class="flex items-center justify-between mb-4">
-                <span class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-pink-100 text-rose-600 border border-pink-200 shadow-xs">
-                    <i class="fa-solid fa-sparkles mr-1.5 text-rose-500"></i>
-                    Masuk Cepat Tanpa Password 🌸
-                </span>
-
-                <span class="text-xs font-bold text-slate-400">
-                    Customer Portal
-                </span>
-            </div>
-
             <!-- Title & Subtitle -->
             <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
                 Masuk Pelanggan Diza's Plushie
@@ -37,18 +26,18 @@
                 <!-- Hidden Customer Portal Role -->
                 <input type="hidden" name="portal_role" value="customer">
 
-                <!-- Name Input (Optional for fast personalization) -->
+                <!-- Name Input (Required) -->
                 <div>
                     <label for="name" class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1.5">
-                        Nama Panggilan / Lengkap <span class="text-slate-400 font-normal">(Opsional)</span>
+                        Nama Panggilan / Lengkap <span class="text-rose-500">*</span>
                     </label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-rose-300">
                             <i class="fa-solid fa-user-tag"></i>
                         </span>
-                        <input type="text" name="name" id="name"
+                        <input type="text" name="name" id="name" required
                             value="{{ old('name') }}"
-                            placeholder="Contoh: Nadia Cantik"
+                            placeholder="Contoh: Zahra"
                             class="w-full pl-11 pr-4 py-3 rounded-2xl border border-pink-200 text-sm transition-all bg-pink-50/30 hover:bg-white focus:bg-white focus:ring-2 focus:ring-rose-400 focus:border-rose-400 font-medium">
                     </div>
                 </div>
@@ -82,7 +71,7 @@
                     <button type="submit"
                         class="w-full py-3.5 px-4 rounded-2xl font-black text-sm text-white shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center space-x-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 shadow-pink-300/30">
                         <i class="fa-solid fa-heart"></i>
-                        <span>Masuk Cepat & Mulai Belanja 🌸</span>
+                        <span>Masuk & Mulai Belanja</span>
                     </button>
                 </div>
 

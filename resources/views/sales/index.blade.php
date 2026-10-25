@@ -11,7 +11,7 @@
                     <i class="fa-solid fa-cash-register"></i>
                 </span>
                 <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">
-                    {{ $user->isCustomer() ? 'Riwayat Pesanan & Belanja Saya' : 'Transaksi Penjualan (Stock-Out)' }}
+                    {{ $user->isCustomer() ? 'Riwayat Pesanan Saya' : 'Transaksi Penjualan (Stock-Out)' }}
                 </h1>
             </div>
             <p class="text-slate-500 text-xs sm:text-sm mt-1">
@@ -32,12 +32,15 @@
         <form action="{{ route('sales.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
             <!-- Search Keyword -->
             <div class="sm:col-span-4">
-                <label class="block text-xs font-bold text-slate-500 mb-1">Cari No. Nota / Pembeli</label>
+                <label class="block text-xs font-bold text-slate-500 mb-1">
+                    {{ $user->isCustomer() ? 'Cari Nomor Nota' : 'Cari No. Nota / Pembeli' }}
+                </label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
                         <i class="fa-solid fa-magnifying-glass text-xs"></i>
                     </span>
-                    <input type="text" name="search" value="{{ $search }}" placeholder="No INV atau nama..."
+                    <input type="text" name="search" value="{{ $search }}"
+                        placeholder="{{ $user->isCustomer() ? 'Contoh: INV-202610...' : 'No INV atau nama...' }}"
                         class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-pink-500 focus:border-pink-500 bg-slate-50 focus:bg-white transition-all">
                 </div>
             </div>

@@ -32,18 +32,23 @@ class SaleController extends Controller
 
         $sales = Sale::with(['user', 'customer', 'items.product'])
             ->when($user->isCustomer(), function ($query) use ($user) {
-                // Strictly filter to own customer sales
-                $query->where('customer_id', $user->id);
+                // Strictly filter to own customer sales matching logged-in customer name
+                $query->where('customer_id', $user->id)
+                      ->where('customer_name', $user->name);
             })
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('sale_number', 'like', "%{$search}%")
-                        ->orWhere('customer_name', 'like', "%{$search}%")
-                        ->orWhereHas('customer', function ($sub) use ($search) {
-                            $sub->where('name', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%");
-                        });
-                });
+            ->when($search, function ($query, $search) use ($user) {
+                if ($user->isCustomer()) {
+                    $query->where('sale_number', 'like', "%{$search}%");
+                } else {
+                    $query->where(function ($q) use ($search) {
+                        $q->where('sale_number', 'like', "%{$search}%")
+                            ->orWhere('customer_name', 'like', "%{$search}%")
+                            ->orWhereHas('customer', function ($sub) use ($search) {
+                                $sub->where('name', 'like', "%{$search}%")
+                                    ->orWhere('email', 'like', "%{$search}%");
+                            });
+                    });
+                }
             })
             ->when($status, function ($query, $status) {
                 $query->where('status', $status);
@@ -83,7 +88,9 @@ class SaleController extends Controller
                 ->get(['id', 'name', 'email', 'phone']);
         }
 
-        return view('sales.create', compact('products', 'customers', 'user'));
+        $selectedProductId = request()->query('product_id');
+
+        return view('sales.create', compact('products', 'customers', 'user', 'selectedProductId'));
     }
 
     /**
