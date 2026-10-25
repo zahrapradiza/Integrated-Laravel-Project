@@ -23,8 +23,15 @@ Route::get('/', function () {
 
 // Guest Authentication Routes
 Route::middleware('guest')->group(function () {
+    // 1. Portal Masuk Pelanggan (Customer)
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+
+    // 2. Portal Masuk Khusus Staff Toko & Gudang
+    Route::get('/staff/login', [AuthController::class, 'showStaffLoginForm'])->name('login.staff');
+
+    // 3. Portal Masuk Khusus Administrator & Owner
+    Route::get('/admin/login', [AuthController::class, 'showAdminLoginForm'])->name('login.admin');
 
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);

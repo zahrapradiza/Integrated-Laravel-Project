@@ -21,7 +21,7 @@
                 <div class="w-36 h-36 sm:w-48 sm:h-48 rounded-3xl overflow-hidden border border-pink-100 flex-shrink-0 shadow-sm bg-slate-100">
                     <img src="{{ asset($product->image_url ?? 'images/plushies/teddy-bear-pita.jpg') }}" 
                          alt="{{ $product->name }}" 
-                         class="w-full h-full object-cover">
+                         class="w-full h-full object-cover object-center">
                 </div>
                 <div>
                     <div class="flex items-center space-x-2 mb-2">

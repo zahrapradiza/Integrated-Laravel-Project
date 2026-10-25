@@ -125,6 +125,18 @@ php artisan serve
 ```
 Aplikasi kini siap diakses melalui web browser pada URL: **`http://127.0.0.1:8000`**
 
+### Langkah 7: Akses 3 Portal Login Terpisah & Kredensial Akun Demo Pengujian
+Untuk menjaga privasi dan keamanan sistem toko, halaman login dipisahkan menjadi 3 portal mandiri tanpa tab campuran:
+
+| Portal & Role | URL Halaman Login | Tema Visual | Kredensial Masuk | Hak Akses Utama |
+|---|---|---|---|---|
+| **Pelanggan (Customer)** | [`/login`](http://127.0.0.1:8000/login) | Soft Pink Pastel 🌸 | Cukup masukkan **Nama** & **Email** (`customer@bonekaku.test` atau sembarang email baru tanpa password). | Belanja boneka di katalog, checkout mandiri, & pantau nota pembelian pribadi. |
+| **Staff Kasir & Gudang** | [`/staff/login`](http://127.0.0.1:8000/staff/login) | Soft Mint / Sage Green 🌿 | Email: `staff@bonekaku.test`<br>Password: `password123` | Buat transaksi kasir toko (Stock-Out POS), catat restock pabrik (Stock-In), & pantau stok rendah. |
+| **Administrator & Owner** | [`/admin/login`](http://127.0.0.1:8000/admin/login) | Soft Lavender / Rose Gold 👑 | Email: `admin@bonekaku.test`<br>Password: `password123` | Hak akses penuh: kelola produk, kategori, supplier, user management, batalkan transaksi, & laporan keuangan. |
+
+> [!NOTE]
+> Sistem secara otomatis menolak dan memblokir login jika pengguna mencoba masuk ke portal yang tidak sesuai dengan role hak aksesnya (misalnya customer mencoba login di portal admin).
+
 ---
 
 ## 4. Entity Relationship Diagram (ERD) & Penjelasan Relasi Database
@@ -381,8 +393,9 @@ php artisan test
    PASS  Tests\Unit\ExampleTest
   ✓ that true is true
 
-   PASS  Tests\Feature\AuthAndRoleTest (9 tests)
+   PASS  Tests\Feature\AuthAndRoleTest (15 tests)
   ✓ login screen can be rendered
+  ✓ staff and admin login screens can be rendered
   ✓ register screen can be rendered
   ✓ guest is redirected to login
   ✓ admin can access dashboard and admin routes
@@ -391,36 +404,47 @@ php artisan test
   ✓ customer can access dashboard
   ✓ user can login with valid credentials
   ✓ user cannot login with invalid password
+  ✓ login with mismatched portal role is rejected
+  ✓ login with matching portal role succeeds
+  ✓ customer can login without password
+  ✓ staff and admin portals still require password
+  ✓ csrf token mismatch redirects back with friendly message
 
-   PASS  Tests\Feature\MasterDataTest (8 tests)
+   PASS  Tests\Feature\MasterDataTest (9 tests)
   ✓ staff can view categories and suppliers but not create
   ✓ customer cannot view categories or suppliers or users
   ✓ admin can create category with validation
   ✓ category cannot be deleted if has products
   ✓ supplier cannot be deleted if has purchases
   ✓ admin can create product with validation
+  ✓ admin can upload product photo
   ✓ product soft delete preserves transaction integrity
   ✓ admin cannot delete self in user management
 
-   PASS  Tests\Feature\PurchaseTest (6 tests)
+   PASS  Tests\Feature\PurchaseTest (7 tests)
   ✓ staff and admin can access purchases index and create
   ✓ customer cannot access purchases
   ✓ store multi item purchase updates stock atomically
   ✓ staff cannot cancel purchase
   ✓ admin can cancel purchase and stock is deducted
   ✓ admin cannot cancel purchase if stock would become negative
+  ✓ purchases create with product id preselects product for restock
 
-   PASS  Tests\Feature\SaleTest (5 tests)
+   PASS  Tests\Feature\SaleTest (6 tests)
   ✓ all roles can access sales index and create
   ✓ customer can create self order and stock is decremented
   ✓ insufficient stock causes transaction rollback
   ✓ customer cannot view other customers receipt
   ✓ staff cannot cancel sale but admin can and stock is restored
+  ✓ sale persists payment method and payment status
 
    PASS  Tests\Feature\DashboardTest (3 tests)
   ✓ admin dashboard displays aggregate metrics and low stock table
   ✓ staff dashboard displays operational metrics and low stock monitoring
   ✓ customer dashboard displays order history and doll recommendations
+
+   PASS  Tests\Feature\ExampleTest (1 test)
+  ✓ the application returns a successful response
 
    PASS  Tests\Feature\UtsInventorySalesTest (7 tests - Slide 11 Compliance)
   ✓ guest cannot access dashboard
@@ -431,8 +455,8 @@ php artisan test
   ✓ sale atomicity rolls back all items if second item fails
   ✓ authorization prevents staff and customer from accessing admin routes
 
-  Tests:    40 passed (184 assertions)
-  Duration: ~2.2s
+  Tests:    49 passed (245 assertions)
+  Duration: ~3.1s
 ```
 
 ### Menjalankan Pengujian Spesifik Slide 11 Dosen

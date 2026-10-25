@@ -484,7 +484,7 @@
                             <div class="w-full h-52 rounded-2xl overflow-hidden mb-3 relative group-hover:scale-[1.02] transition-transform duration-200 bg-slate-100 border border-pink-100">
                                 <img src="{{ asset($item->image_url ?? 'images/plushies/teddy-bear-pita.jpg') }}" 
                                      alt="{{ $item->name }}" 
-                                     class="object-cover w-full h-52 rounded-2xl">
+                                     class="object-cover object-center w-full h-52 rounded-2xl">
                                 
                                 <div class="absolute top-2 left-2">
                                     <span class="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-white/90 text-pink-600 border border-pink-200 shadow-xs">

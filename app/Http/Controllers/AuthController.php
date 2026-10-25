@@ -13,7 +13,7 @@ use Illuminate\View\View;
 class AuthController extends Controller
 {
     /**
-     * Show the login form with role-specific portal selection.
+     * Show the dedicated Customer login form.
      */
     public function showLoginForm(Request $request): View|RedirectResponse
     {
@@ -21,16 +21,43 @@ class AuthController extends Controller
             return redirect()->route('dashboard');
         }
 
-        $portal = session('portal', $request->query('portal', 'customer'));
-        if (! in_array($portal, ['customer', 'staff', 'admin'])) {
-            $portal = 'customer';
+        // Backward compatibility: redirect portal query params to separate routes
+        if ($request->query('portal') === 'staff') {
+            return redirect()->route('login.staff');
+        }
+        if ($request->query('portal') === 'admin') {
+            return redirect()->route('login.admin');
         }
 
-        return view('auth.login', compact('portal'));
+        return view('auth.login');
     }
 
     /**
-     * Process login authentication with passwordless Customer portal and credentials for Staff/Admin.
+     * Show the dedicated Staff login form (/staff/login).
+     */
+    public function showStaffLoginForm(): View|RedirectResponse
+    {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
+        return view('auth.login-staff');
+    }
+
+    /**
+     * Show the dedicated Administrator login form (/admin/login).
+     */
+    public function showAdminLoginForm(): View|RedirectResponse
+    {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
+        return view('auth.login-admin');
+    }
+
+    /**
+     * Process login authentication across Customer, Staff, and Admin portals.
      */
     public function login(Request $request): RedirectResponse
     {
@@ -50,10 +77,11 @@ class AuthController extends Controller
             $user = User::where('email', $validated['email'])->first();
 
             if ($user) {
-                // If user is Admin or Staff, require regular password portal
+                // If user is Admin or Staff, require dedicated portal
                 if (! $user->isCustomer()) {
+                    $portalUrl = $user->isAdmin() ? '/admin/login' : '/staff/login';
                     return back()->withErrors([
-                        'email' => 'Email ini terdaftar sebagai ' . strtoupper($user->role) . '. Silakan masuk melalui tab ' . ($user->isAdmin() ? 'Administrator' : 'Staff Toko') . ' dengan kata sandi.',
+                        'email' => 'Email ini terdaftar sebagai ' . strtoupper($user->role) . '. Silakan masuk melalui portal ' . ($user->isAdmin() ? 'Administrator' : 'Staff Toko') . " ({$portalUrl}) dengan kata sandi.",
                     ])->withInput($request->only('email', 'name'))->with('portal', 'customer');
                 }
 

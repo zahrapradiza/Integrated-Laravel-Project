@@ -74,49 +74,49 @@
                 </div>
 
                 <!-- Desktop Navigation Menu -->
+                @auth
                 <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
                     <a href="{{ route('dashboard') }}" class="px-3 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('dashboard') ? 'bg-pink-100/70 text-rose-700' : 'text-slate-600 hover:text-rose-600 hover:bg-pink-50/50' }}">
                         <i class="fa-solid fa-chart-pie mr-1.5 text-xs"></i> Dashboard
                     </a>
 
-                    @auth
-                        @if(auth()->user()->isAdmin() || auth()->user()->isStaff())
-                            <!-- Admin & Staff Navigation -->
-                            <a href="{{ route('products.index') }}" class="px-3 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('products.*') ? 'bg-pink-100/70 text-rose-700' : 'text-slate-600 hover:text-rose-600 hover:bg-pink-50/50' }}">
-                                <i class="fa-solid fa-boxes-stacked mr-1.5 text-xs"></i> Koleksi Boneka
-                            </a>
-                            <a href="{{ route('categories.index') }}" class="px-3 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('categories.*') ? 'bg-pink-100/70 text-rose-700' : 'text-slate-600 hover:text-rose-600 hover:bg-pink-50/50' }}">
-                                <i class="fa-solid fa-tags mr-1.5 text-xs"></i> Kategori
-                            </a>
-                            <a href="{{ route('suppliers.index') }}" class="px-3 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('suppliers.*') ? 'bg-amber-100/70 text-amber-800' : 'text-slate-600 hover:text-amber-700 hover:bg-amber-50/50' }}">
-                                <i class="fa-solid fa-industry mr-1.5 text-xs"></i> Pemasok
-                            </a>
-                            <a href="{{ route('purchases.index') }}" class="px-3 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('purchases.*') ? 'bg-emerald-100/70 text-emerald-800' : 'text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/50' }}">
-                                <i class="fa-solid fa-truck-ramp-box mr-1.5 text-xs"></i> Stock-In
-                            </a>
-                            <a href="{{ route('sales.index') }}" class="px-3 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('sales.*') ? 'bg-rose-100/70 text-rose-800' : 'text-slate-600 hover:text-rose-700 hover:bg-pink-50/50' }}">
-                                <i class="fa-solid fa-cash-register mr-1.5 text-xs"></i> Penjualan (POS)
-                            </a>
+                    @if(auth()->user()->isAdmin() || auth()->user()->isStaff())
+                        <!-- Admin & Staff Navigation -->
+                        <a href="{{ route('products.index') }}" class="px-3 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('products.*') ? 'bg-pink-100/70 text-rose-700' : 'text-slate-600 hover:text-rose-600 hover:bg-pink-50/50' }}">
+                            <i class="fa-solid fa-boxes-stacked mr-1.5 text-xs"></i> Koleksi Boneka
+                        </a>
+                        <a href="{{ route('categories.index') }}" class="px-3 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('categories.*') ? 'bg-pink-100/70 text-rose-700' : 'text-slate-600 hover:text-rose-600 hover:bg-pink-50/50' }}">
+                            <i class="fa-solid fa-tags mr-1.5 text-xs"></i> Kategori
+                        </a>
+                        <a href="{{ route('suppliers.index') }}" class="px-3 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('suppliers.*') ? 'bg-amber-100/70 text-amber-800' : 'text-slate-600 hover:text-amber-700 hover:bg-amber-50/50' }}">
+                            <i class="fa-solid fa-industry mr-1.5 text-xs"></i> Pemasok
+                        </a>
+                        <a href="{{ route('purchases.index') }}" class="px-3 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('purchases.*') ? 'bg-emerald-100/70 text-emerald-800' : 'text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/50' }}">
+                            <i class="fa-solid fa-truck-ramp-box mr-1.5 text-xs"></i> Stock-In
+                        </a>
+                        <a href="{{ route('sales.index') }}" class="px-3 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('sales.*') ? 'bg-rose-100/70 text-rose-800' : 'text-slate-600 hover:text-rose-700 hover:bg-pink-50/50' }}">
+                            <i class="fa-solid fa-cash-register mr-1.5 text-xs"></i> Penjualan (POS)
+                        </a>
 
-                            @if(auth()->user()->isAdmin())
-                                <a href="{{ route('users.index') }}" class="px-3 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('users.*') ? 'bg-purple-100/70 text-purple-800' : 'text-slate-600 hover:text-purple-700 hover:bg-purple-50/50' }}">
-                                    <i class="fa-solid fa-users-gear mr-1.5 text-xs"></i> Kelola User
-                                </a>
-                            @endif
-                        @else
-                            <!-- Customer Navigation -->
-                            <a href="{{ route('products.catalog') }}" class="px-3.5 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('products.catalog') ? 'bg-pink-100/80 text-rose-700' : 'text-slate-600 hover:text-rose-600 hover:bg-pink-50/50' }}">
-                                <i class="fa-solid fa-store mr-1.5 text-xs"></i> Katalog Boneka
-                            </a>
-                            <a href="{{ route('sales.index') }}" class="px-3.5 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('sales.*') ? 'bg-emerald-100/80 text-emerald-800' : 'text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/50' }}">
-                                <i class="fa-solid fa-bag-shopping mr-1.5 text-xs"></i> Pesanan Saya
-                            </a>
-                            <a href="{{ route('sales.create') }}" class="px-3.5 py-2 rounded-xl text-sm font-bold bg-rose-500 hover:bg-rose-600 text-white shadow-sm transition-all">
-                                <i class="fa-solid fa-cart-plus mr-1.5 text-xs"></i> Pesan Boneka
+                        @if(auth()->user()->isAdmin())
+                            <a href="{{ route('users.index') }}" class="px-3 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('users.*') ? 'bg-purple-100/70 text-purple-800' : 'text-slate-600 hover:text-purple-700 hover:bg-purple-50/50' }}">
+                                <i class="fa-solid fa-users-gear mr-1.5 text-xs"></i> Kelola User
                             </a>
                         @endif
-                    @endauth
+                    @else
+                        <!-- Customer Navigation -->
+                        <a href="{{ route('products.catalog') }}" class="px-3.5 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('products.catalog') ? 'bg-pink-100/80 text-rose-700' : 'text-slate-600 hover:text-rose-600 hover:bg-pink-50/50' }}">
+                            <i class="fa-solid fa-store mr-1.5 text-xs"></i> Katalog Boneka
+                        </a>
+                        <a href="{{ route('sales.index') }}" class="px-3.5 py-2 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('sales.*') ? 'bg-emerald-100/80 text-emerald-800' : 'text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/50' }}">
+                            <i class="fa-solid fa-bag-shopping mr-1.5 text-xs"></i> Pesanan Saya
+                        </a>
+                        <a href="{{ route('sales.create') }}" class="px-3.5 py-2 rounded-xl text-sm font-bold bg-rose-500 hover:bg-rose-600 text-white shadow-sm transition-all">
+                            <i class="fa-solid fa-cart-plus mr-1.5 text-xs"></i> Pesan Boneka
+                        </a>
+                    @endif
                 </nav>
+                @endauth
 
                 <!-- User Profile & Action -->
                 <div class="flex items-center space-x-3">
@@ -150,9 +150,11 @@
                             </button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}" class="inline-flex items-center px-4 py-2 text-sm font-extrabold rounded-2xl bg-rose-500 text-white hover:bg-rose-600 shadow-sm transition-colors">
-                            <i class="fa-solid fa-arrow-right-to-bracket mr-1.5"></i> Masuk
-                        </a>
+                        @if(!request()->is('login*') && !request()->is('*/login') && !request()->is('register*'))
+                            <a href="{{ route('login') }}" class="inline-flex items-center px-4 py-2 text-sm font-extrabold rounded-2xl bg-rose-500 text-white hover:bg-rose-600 shadow-sm transition-colors">
+                                <i class="fa-solid fa-arrow-right-to-bracket mr-1.5"></i> Masuk
+                            </a>
+                        @endif
                     @endauth
                 </div>
             </div>

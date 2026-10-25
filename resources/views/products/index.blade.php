@@ -110,7 +110,7 @@
                                 <div class="flex items-center space-x-3">
                                     <img src="{{ asset($prod->image_url ?? 'images/plushies/teddy-bear-pita.jpg') }}" 
                                          alt="{{ $prod->name }}" 
-                                         class="w-14 h-14 object-cover rounded-2xl border border-pink-100 flex-shrink-0 shadow-xs">
+                                         class="w-14 h-14 object-cover object-center rounded-2xl border border-pink-100 flex-shrink-0 shadow-xs">
                                     <div>
                                         <a href="{{ route('products.show', $prod) }}" class="font-extrabold text-slate-900 hover:text-pink-600 transition-colors block">
                                             {{ $prod->name }}

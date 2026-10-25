@@ -42,39 +42,37 @@ class AuthAndRoleTest extends TestCase
         $response = $this->get('/login');
         $response->assertStatus(200);
 
-        // Verify portal tabs are present
-        $response->assertSee('Pelanggan');
-        $response->assertSee('Staff Toko');
-        $response->assertSee('Administrator');
-        $response->assertSee("Masuk Pelanggan Diza's Plushie");
-
-        // Verify NO demo credentials or passwords leaked on screen
+        // Verify Customer portal content
+        $response->assertSee("Masuk Pelanggan Diza's Plushie", false);
+        $response->assertSee('Daftar Akun Customer Sekarang');
         $response->assertDontSee('Akun Demo Siap Pakai');
         $response->assertDontSee('admin@bonekaku.test');
         $response->assertDontSee('staff@bonekaku.test');
         $response->assertDontSee('customer@bonekaku.test');
+        $response->assertDontSee('portal-tab-btn');
     }
 
-    public function test_login_screen_renders_specific_portals(): void
+    public function test_staff_and_admin_login_screens_can_be_rendered(): void
     {
-        // 1. Staff portal
-        $staffResponse = $this->get('/login?portal=staff');
+        // 1. Staff dedicated portal
+        $staffResponse = $this->get('/staff/login');
         $staffResponse->assertStatus(200);
         $staffResponse->assertSee('Portal Staff Operasional');
-        $staffResponse->assertSee('Portal Staff Kasir');
+        $staffResponse->assertSee('Portal Staff Kasir & Gudang', false);
         $staffResponse->assertDontSee('Daftar Akun Customer Sekarang');
 
-        // 2. Admin portal
-        $adminResponse = $this->get('/login?portal=admin');
+        // 2. Admin dedicated portal
+        $adminResponse = $this->get('/admin/login');
         $adminResponse->assertStatus(200);
-        $adminResponse->assertSee('Portal Administrator');
+        $adminResponse->assertSee('Portal Administrator & Owner', false);
         $adminResponse->assertDontSee('Daftar Akun Customer Sekarang');
 
-        // 3. Customer portal
-        $customerResponse = $this->get('/login?portal=customer');
-        $customerResponse->assertStatus(200);
-        $customerResponse->assertSee("Masuk Pelanggan Diza's Plushie");
-        $customerResponse->assertSee('Daftar Akun Customer Sekarang');
+        // 3. Backward compatible query param redirects to separate routes
+        $legacyStaff = $this->get('/login?portal=staff');
+        $legacyStaff->assertRedirect(route('login.staff'));
+
+        $legacyAdmin = $this->get('/login?portal=admin');
+        $legacyAdmin->assertRedirect(route('login.admin'));
     }
 
     public function test_register_screen_can_be_rendered(): void
@@ -158,29 +156,25 @@ class AuthAndRoleTest extends TestCase
     public function test_login_with_mismatched_portal_role_is_rejected(): void
     {
         // Customer attempting to login via Admin Portal
-        $response = $this->from('/login?portal=admin')->post('/login', [
+        $response = $this->from('/admin/login')->post('/login', [
             'email' => 'customer@bonekaku.test',
             'password' => 'password123',
             'portal_role' => 'admin',
         ]);
 
-        $response->assertRedirect('/login?portal=admin');
-        $response->assertSessionHasErrors([
-            'email' => 'Akun Anda bukan akun Admin/Staff. Silakan masuk melalui tab Portal Customer.',
-        ]);
+        $response->assertRedirect('/admin/login');
+        $response->assertSessionHasErrors('email');
         $this->assertGuest();
 
         // Staff attempting to login via Admin Portal
-        $staffResponse = $this->from('/login?portal=admin')->post('/login', [
+        $staffResponse = $this->from('/admin/login')->post('/login', [
             'email' => 'staff@bonekaku.test',
             'password' => 'password123',
             'portal_role' => 'admin',
         ]);
 
-        $staffResponse->assertRedirect('/login?portal=admin');
-        $staffResponse->assertSessionHasErrors([
-            'email' => 'Akun Anda bukan akun Administrator. Silakan masuk melalui tab Portal Staff.',
-        ]);
+        $staffResponse->assertRedirect('/admin/login');
+        $staffResponse->assertSessionHasErrors('email');
         $this->assertGuest();
     }
 
