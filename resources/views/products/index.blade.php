@@ -108,9 +108,9 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center space-x-3">
-                                    <img src="{{ asset($prod->image_url ?? 'images/plushies/teddy-bear-pita.svg') }}" 
+                                    <img src="{{ asset($prod->image_url ?? 'images/plushies/teddy-bear-pita.jpg') }}" 
                                          alt="{{ $prod->name }}" 
-                                         class="w-12 h-12 object-contain rounded-2xl bg-pink-50 border border-pink-100 p-1 flex-shrink-0 shadow-sm">
+                                         class="w-14 h-14 object-cover rounded-2xl border border-pink-100 flex-shrink-0 shadow-xs">
                                     <div>
                                         <a href="{{ route('products.show', $prod) }}" class="font-extrabold text-slate-900 hover:text-pink-600 transition-colors block">
                                             {{ $prod->name }}
@@ -143,6 +143,11 @@
                                             {{ $prod->stock }} pcs
                                         </span>
                                         <span class="text-[10px] text-rose-500 font-bold mt-0.5">Min: {{ $prod->minimum_stock }} (Kritis)</span>
+                                        <a href="{{ route('purchases.create', ['product_id' => $prod->id]) }}" 
+                                           class="mt-1 px-2 py-0.5 rounded-lg text-[10px] font-black bg-blue-100 hover:bg-blue-200 text-blue-800 border border-blue-300 inline-flex items-center transition-colors shadow-2xs" 
+                                           title="Restock Boneka Ini">
+                                            <i class="fa-solid fa-cart-plus mr-1"></i> Restock
+                                        </a>
                                     </div>
                                 @else
                                     <div class="inline-flex flex-col items-center">
@@ -157,6 +162,9 @@
                                 <div class="inline-flex items-center space-x-1.5">
                                     <a href="{{ route('products.show', $prod) }}" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors" title="Lihat Detail">
                                         <i class="fa-solid fa-eye text-xs"></i>
+                                    </a>
+                                    <a href="{{ route('purchases.create', ['product_id' => $prod->id]) }}" class="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors" title="Restock / Buat Purchase">
+                                        <i class="fa-solid fa-truck-ramp-box text-xs"></i>
                                     </a>
                                     @if(auth()->user()->isAdmin())
                                         <a href="{{ route('products.edit', $prod) }}" class="p-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 transition-colors" title="Ubah Produk">

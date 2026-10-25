@@ -225,7 +225,7 @@
                                         Rp {{ number_format($prod->selling_price, 0, ',', '.') }}
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <a href="{{ route('purchases.create') }}" class="inline-flex items-center px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs border border-blue-200 shadow-sm transition-all" title="Buka form Stock-In untuk restock boneka ini">
+                                        <a href="{{ route('purchases.create', ['product_id' => $prod->id]) }}" class="inline-flex items-center px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs border border-blue-200 shadow-sm transition-all" title="Buka form Stock-In untuk restock boneka ini">
                                             <i class="fa-solid fa-cart-plus mr-1.5 text-blue-600"></i> Restock / Buat Purchase
                                         </a>
                                     </td>
@@ -480,11 +480,11 @@
                 @foreach($featuredProducts as $item)
                     <div class="bg-white rounded-3xl border border-pink-100 p-4 sm:p-5 shadow-sm hover:shadow-md hover:border-pink-200 transition-all flex flex-col justify-between group">
                         <div>
-                            <!-- Doll Illustration Image -->
-                            <div class="w-full h-40 rounded-2xl bg-gradient-to-b from-pink-50/70 to-purple-50/40 border border-pink-100/60 flex items-center justify-center p-3 mb-3 relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-200">
-                                <img src="{{ asset($item->image_url ?? 'images/plushies/teddy-bear-pita.svg') }}" 
+                            <!-- Real Plushie Photo -->
+                            <div class="w-full h-52 rounded-2xl overflow-hidden mb-3 relative group-hover:scale-[1.02] transition-transform duration-200 bg-slate-100 border border-pink-100">
+                                <img src="{{ asset($item->image_url ?? 'images/plushies/teddy-bear-pita.jpg') }}" 
                                      alt="{{ $item->name }}" 
-                                     class="max-h-full max-w-full object-contain filter drop-shadow-sm">
+                                     class="object-cover w-full h-52 rounded-2xl">
                                 
                                 <div class="absolute top-2 left-2">
                                     <span class="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-white/90 text-pink-600 border border-pink-200 shadow-xs">

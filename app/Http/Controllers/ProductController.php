@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -100,6 +101,7 @@ class ProductController extends Controller
             'size' => ['nullable', 'string', 'max:100'],
             'material' => ['nullable', 'string', 'max:100'],
             'image_url' => ['nullable', 'string', 'max:255'],
+            'image_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:5120'],
             'purchase_price' => ['required', 'numeric', 'min:0'],
             'selling_price' => ['required', 'numeric', 'min:0'],
             'stock' => ['nullable', 'integer', 'min:0'],
@@ -113,11 +115,20 @@ class ProductController extends Controller
             'purchase_price.required' => 'Harga beli/modal wajib diisi.',
             'selling_price.required' => 'Harga jual wajib diisi.',
             'minimum_stock.required' => 'Batas stok minimum wajib diisi.',
+            'image_file.image' => 'File harus berupa foto gambar yang valid.',
+            'image_file.max' => 'Ukuran foto maksimal 5MB.',
         ]);
+
+        if ($request->hasFile('image_file') && $request->file('image_file')->isValid()) {
+            $file = $request->file('image_file');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images/plushies'), $filename);
+            $validated['image_url'] = '/images/plushies/' . $filename;
+        }
 
         $validated['stock'] = $validated['stock'] ?? 0;
         if (empty($validated['image_url'])) {
-            $validated['image_url'] = '/images/plushies/teddy-bear-pita.svg';
+            $validated['image_url'] = '/images/plushies/teddy-bear-pita.jpg';
         }
 
         Product::create($validated);
@@ -161,6 +172,7 @@ class ProductController extends Controller
             'size' => ['nullable', 'string', 'max:100'],
             'material' => ['nullable', 'string', 'max:100'],
             'image_url' => ['nullable', 'string', 'max:255'],
+            'image_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:5120'],
             'purchase_price' => ['required', 'numeric', 'min:0'],
             'selling_price' => ['required', 'numeric', 'min:0'],
             'minimum_stock' => ['required', 'integer', 'min:0'],
@@ -172,10 +184,19 @@ class ProductController extends Controller
             'purchase_price.required' => 'Harga beli wajib diisi.',
             'selling_price.required' => 'Harga jual wajib diisi.',
             'minimum_stock.required' => 'Batas minimum stok wajib diisi.',
+            'image_file.image' => 'File harus berupa foto gambar yang valid.',
+            'image_file.max' => 'Ukuran foto maksimal 5MB.',
         ]);
 
+        if ($request->hasFile('image_file') && $request->file('image_file')->isValid()) {
+            $file = $request->file('image_file');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images/plushies'), $filename);
+            $validated['image_url'] = '/images/plushies/' . $filename;
+        }
+
         if (empty($validated['image_url'])) {
-            $validated['image_url'] = $product->image_url ?: '/images/plushies/teddy-bear-pita.svg';
+            $validated['image_url'] = $product->image_url ?: '/images/plushies/teddy-bear-pita.jpg';
         }
 
         $product->update($validated);

@@ -58,12 +58,14 @@ class PurchaseController extends Controller
     /**
      * Show the form for creating a new purchase (Stock-In).
      */
-    public function create(): View
+    public function create(Request $request): View
     {
         $suppliers = Supplier::orderBy('name', 'asc')->get();
-        $products = Product::orderBy('name', 'asc')->get(['id', 'sku', 'name', 'size', 'purchase_price', 'stock']);
+        $products = Product::orderBy('name', 'asc')->get(['id', 'sku', 'name', 'size', 'purchase_price', 'stock', 'minimum_stock']);
+        $selectedProductId = $request->query('product_id');
+        $selectedProduct = $selectedProductId ? Product::find($selectedProductId) : null;
 
-        return view('purchases.create', compact('suppliers', 'products'));
+        return view('purchases.create', compact('suppliers', 'products', 'selectedProduct', 'selectedProductId'));
     }
 
     /**

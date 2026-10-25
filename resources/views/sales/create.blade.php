@@ -229,7 +229,7 @@
         let optionsHtml = '<option value="">-- Pilih Koleksi Boneka --</option>';
         availableProducts.forEach(p => {
             const isSelected = p.id == selectedProductId ? 'selected' : '';
-            const imgPath = p.image_url || '/images/plushies/teddy-bear-pita.svg';
+            const imgPath = p.image_url || '/images/plushies/teddy-bear-pita.jpg';
             optionsHtml += `<option value="${p.id}" data-price="${p.selling_price}" data-stock="${p.stock}" data-img="${imgPath}" ${isSelected}>
                 ${p.name} (${p.size || 'Standard'}) - Sisa: ${p.stock} pcs
             </option>`;
@@ -238,7 +238,7 @@
         tr.innerHTML = `
             <td class="px-4 py-3">
                 <div class="flex items-center space-x-2.5">
-                    <img src="/images/plushies/teddy-bear-pita.svg" class="row-thumb w-10 h-10 rounded-xl object-contain bg-pink-50 p-1 border border-pink-100 shrink-0 shadow-sm" alt="Thumbnail">
+                    <img src="/images/plushies/teddy-bear-pita.jpg" class="row-thumb w-12 h-12 rounded-xl object-cover bg-pink-50 border border-pink-100 shrink-0 shadow-xs" alt="Thumbnail">
                     <div class="flex-1">
                         <select name="items[${rowIndex}][product_id]" required
                             class="product-select w-full px-3 py-2 rounded-xl border border-pink-200 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-rose-400 focus:border-rose-400 bg-white">
@@ -280,7 +280,7 @@
             if (selectedOpt && selectedOpt.value) {
                 const stock = parseInt(selectedOpt.getAttribute('data-stock')) || 0;
                 const price = parseFloat(selectedOpt.getAttribute('data-price')) || 0;
-                const img = selectedOpt.getAttribute('data-img') || '/images/plushies/teddy-bear-pita.svg';
+                const img = selectedOpt.getAttribute('data-img') || '/images/plushies/teddy-bear-pita.jpg';
                 tr.querySelector('.stock-cell').textContent = `${stock} pcs`;
                 tr.querySelector('.price-display').textContent = formatRupiah(price);
                 thumb.src = img;
@@ -288,7 +288,7 @@
             } else {
                 tr.querySelector('.stock-cell').textContent = '-';
                 tr.querySelector('.price-display').textContent = 'Rp 0';
-                thumb.src = '/images/plushies/teddy-bear-pita.svg';
+                thumb.src = '/images/plushies/teddy-bear-pita.jpg';
             }
             validateAndCalculateRow(tr);
         });

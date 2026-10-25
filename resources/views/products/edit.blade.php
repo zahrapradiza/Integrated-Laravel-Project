@@ -23,7 +23,7 @@
             </div>
         </div>
 
-        <form action="{{ route('products.update', $product) }}" method="POST" class="space-y-5">
+        <form action="{{ route('products.update', $product) }}" method="POST" enctype="multipart/form-data" class="space-y-5">
             @csrf
             @method('PUT')
 
@@ -138,50 +138,71 @@
                 @enderror
             </div>
 
-            <!-- Image URL Input -->
-            <div>
-                <label for="image_url" class="block text-sm font-bold text-slate-700 mb-1.5">
-                    Ilustrasi / Foto Boneka (URL atau Pilihan Preset)
+            <!-- Image File & Preset Selection -->
+            <div class="p-4 sm:p-5 rounded-2xl bg-pink-50/40 border border-pink-100 space-y-3">
+                <label class="block text-sm font-bold text-slate-800">
+                    <i class="fa-solid fa-camera mr-1 text-pink-500"></i> Foto Produk Boneka Asli
                 </label>
-                <div class="flex items-center space-x-3 mb-2">
-                    <img src="{{ asset($product->image_url ?? 'images/plushies/teddy-bear-pita.svg') }}" 
+
+                <div class="flex items-center space-x-4 mb-2">
+                    <img src="{{ asset($product->image_url ?? 'images/plushies/teddy-bear-pita.jpg') }}" 
                          alt="{{ $product->name }}" 
                          id="current_image_preview"
-                         class="w-12 h-12 object-contain rounded-xl bg-pink-50 border border-pink-100 p-1 flex-shrink-0">
+                         class="w-16 h-16 object-cover rounded-2xl bg-pink-50 border border-pink-100 shadow-xs flex-shrink-0">
+                    <div class="flex-1">
+                        <label for="image_file" class="block text-xs font-bold text-slate-600 mb-1">
+                            Unggah Foto Boneka Baru dari Komputer
+                        </label>
+                        <input type="file" name="image_file" id="image_file" accept="image/*"
+                            onchange="if(this.files && this.files[0]) { document.getElementById('current_image_preview').src = URL.createObjectURL(this.files[0]); }"
+                            class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-pink-100 file:text-pink-700 hover:file:bg-pink-200 cursor-pointer border border-pink-200 rounded-xl p-1 bg-white">
+                        <p class="text-[11px] text-slate-400 mt-1">Mendukung format JPG, PNG, WEBP (Maksimal 5MB).</p>
+                        @error('image_file')
+                            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div>
+                    <label for="image_url" class="block text-xs font-bold text-slate-600 mb-1">
+                        Atau Gunakan Path / URL Foto Boneka
+                    </label>
                     <input type="text" name="image_url" id="image_url"
                         value="{{ old('image_url', $product->image_url) }}"
-                        oninput="document.getElementById('current_image_preview').src = this.value || '{{ asset('images/plushies/teddy-bear-pita.svg') }}'"
-                        placeholder="Contoh: images/plushies/teddy-bear-pita.svg atau https://..."
-                        class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-sm bg-slate-50/50 hover:bg-white focus:bg-white transition-all">
+                        oninput="document.getElementById('current_image_preview').src = this.value || '{{ asset('images/plushies/teddy-bear-pita.jpg') }}'"
+                        placeholder="Contoh: images/plushies/teddy-bear-pita.jpg atau https://..."
+                        class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-xs bg-white transition-all">
+                    @error('image_url')
+                        <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
-                <p class="text-[11px] text-slate-400">
-                    Opsional. Jika dikosongkan, sistem otomatis memberikan ilustrasi pastel lucu sesuai kategori boneka.
-                </p>
+
                 <!-- Quick Preset Selector -->
-                <div class="mt-2.5 flex flex-wrap gap-2 items-center">
-                    <span class="text-[11px] font-bold text-slate-400">Pilih Cepat:</span>
-                    @php
-                        $presets = [
-                            ['label' => '🧸 Teddy Pita', 'path' => 'images/plushies/teddy-bear-pita.svg'],
-                            ['label' => '🐰 Kelinci Pink', 'path' => 'images/plushies/kelinci-pink.svg'],
-                            ['label' => '🐼 Panda Bambu', 'path' => 'images/plushies/panda-bambu.svg'],
-                            ['label' => '🧋 Kucing Boba', 'path' => 'images/plushies/kucing-boba.svg'],
-                            ['label' => '🦊 Rubah Pastel', 'path' => 'images/plushies/rubah-pastel.svg'],
-                            ['label' => '🎓 Beruang Wisuda', 'path' => 'images/plushies/beruang-wisuda.svg'],
-                            ['label' => '🌸 Buket Boneka', 'path' => 'images/plushies/buket-boneka.svg'],
-                            ['label' => '🐕 Bantal Shiba', 'path' => 'images/plushies/bantal-shiba.svg'],
-                        ];
-                    @endphp
-                    @foreach($presets as $pr)
-                        <button type="button" onclick="document.getElementById('image_url').value = '{{ $pr['path'] }}'; document.getElementById('current_image_preview').src = '{{ asset('') }}' + '{{ $pr['path'] }}'"
-                            class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-pink-50 hover:bg-pink-100 text-pink-700 border border-pink-200 transition-colors">
-                            {{ $pr['label'] }}
-                        </button>
-                    @endforeach
+                <div class="pt-2 border-t border-pink-100/70">
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <span class="text-[11px] font-bold text-slate-500">Pilih Cepat Koleksi Asli:</span>
+                        @php
+                            $presets = [
+                                ['label' => '🧸 Teddy Pita', 'path' => 'images/plushies/teddy-bear-pita.jpg'],
+                                ['label' => '🧸 Teddy Sweater', 'path' => 'images/plushies/teddy-bear-mini.jpg'],
+                                ['label' => '🐰 Kelinci Pink', 'path' => 'images/plushies/kelinci-pink.jpg'],
+                                ['label' => '🐼 Panda Bambu', 'path' => 'images/plushies/panda-bambu.jpg'],
+                                ['label' => '🧋 Kucing Boba', 'path' => 'images/plushies/kucing-boba.jpg'],
+                                ['label' => '🎎 Chibi Idol', 'path' => 'images/plushies/chibi-idol.jpg'],
+                                ['label' => '🦊 Rubah Pastel', 'path' => 'images/plushies/rubah-pastel.jpg'],
+                                ['label' => '🎓 Beruang Wisuda', 'path' => 'images/plushies/beruang-wisuda.jpg'],
+                                ['label' => '🌸 Buket Boneka', 'path' => 'images/plushies/buket-boneka.jpg'],
+                                ['label' => '🐕 Bantal Shiba', 'path' => 'images/plushies/bantal-shiba.jpg'],
+                            ];
+                        @endphp
+                        @foreach($presets as $pr)
+                            <button type="button" onclick="document.getElementById('image_url').value = '{{ $pr['path'] }}'; document.getElementById('current_image_preview').src = '{{ asset('') }}' + '{{ $pr['path'] }}'"
+                                class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-white hover:bg-pink-100 text-pink-700 border border-pink-200 transition-colors shadow-2xs">
+                                {{ $pr['label'] }}
+                            </button>
+                        @endforeach
+                    </div>
                 </div>
-                @error('image_url')
-                    <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
-                @enderror
             </div>
 
             <!-- Buttons -->

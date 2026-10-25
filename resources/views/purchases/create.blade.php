@@ -19,6 +19,27 @@
             </span>
         </div>
 
+        @if(isset($selectedProduct) && $selectedProduct)
+            <div class="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                <div class="flex items-center space-x-3">
+                    <span class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg flex-shrink-0">
+                        <i class="fa-solid fa-bolt"></i>
+                    </span>
+                    <div>
+                        <h2 class="font-extrabold text-sm text-amber-900">
+                            Mode Restock Cepat: Boneka {{ $selectedProduct->name }} telah dipilih otomatis untuk penambahan stok.
+                        </h2>
+                        <p class="text-xs text-amber-700 mt-0.5">
+                            Stok Saat Ini: <strong>{{ $selectedProduct->stock }} pcs</strong> &bull; Batas Minimum: <strong>{{ $selectedProduct->minimum_stock }} pcs</strong> &bull; Estimasi Harga Beli: <strong>Rp {{ number_format($selectedProduct->purchase_price, 0, ',', '.') }}</strong>
+                        </p>
+                    </div>
+                </div>
+                <a href="{{ route('purchases.create') }}" class="text-xs font-bold text-amber-800 hover:text-amber-950 underline flex-shrink-0">
+                    Bersihkan Pilihan
+                </a>
+            </div>
+        @endif
+
         <form action="{{ route('purchases.store') }}" method="POST" id="purchaseForm" class="space-y-6">
             @csrf
 
@@ -143,6 +164,7 @@
 <script>
     const productsData = @json($products);
     const oldItems = @json(old('items', []));
+    const preselectedProduct = @json($selectedProduct ?? null);
 
     let rowIndex = 0;
 
@@ -165,7 +187,7 @@
 
         tr.innerHTML = `
             <td class="px-4 py-3">
-                <select name="items[${rowIndex}][product_id]" required class="product-select w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                <select name="items[${rowIndex}][product_id]" required class="product-select w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white font-medium">
                     ${optionsHtml}
                 </select>
             </td>
@@ -228,6 +250,7 @@
 
         // Trigger change for initial stock & cost setup
         if (selectedProductId) {
+            costInput.value = parseFloat(unitCost).toFixed(2);
             select.dispatchEvent(new Event('change'));
         }
 
@@ -257,10 +280,17 @@
         return 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(number));
     }
 
-    // Initialize with old items or 1 empty row
+    // Initialize with old items, preselected restock product, or 1 empty row
     document.addEventListener('DOMContentLoaded', () => {
         if (oldItems && oldItems.length > 0) {
             oldItems.forEach(item => createRow(item));
+        } else if (preselectedProduct) {
+            const suggestedQty = Math.max(10, ((preselectedProduct.minimum_stock || 5) * 2) - preselectedProduct.stock);
+            createRow({
+                product_id: preselectedProduct.id,
+                quantity: suggestedQty > 0 ? suggestedQty : 10,
+                unit_cost: preselectedProduct.purchase_price
+            });
         } else {
             createRow();
         }

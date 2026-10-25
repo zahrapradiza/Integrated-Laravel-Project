@@ -143,9 +143,9 @@
                                 </td>
                                 <td class="px-5 py-3.5">
                                     <div class="flex items-center space-x-3">
-                                        <img src="{{ asset($item->product->image_url ?? 'images/plushies/teddy-bear-pita.svg') }}" 
+                                        <img src="{{ asset($item->product->image_url ?? 'images/plushies/teddy-bear-pita.jpg') }}" 
                                              alt="{{ $item->product->name ?? 'Boneka' }}" 
-                                             class="w-10 h-10 object-contain rounded-xl bg-pink-50 border border-pink-100 p-1 flex-shrink-0">
+                                             class="w-12 h-12 object-cover rounded-xl border border-pink-100 flex-shrink-0 shadow-xs">
                                         <div>
                                             <div class="font-extrabold text-slate-900">{{ $item->product->name ?? 'Produk Dihapus' }}</div>
                                             <div class="text-[11px] text-slate-400 font-mono">{{ $item->product->sku ?? '-' }}</div>

@@ -55,11 +55,11 @@
         @forelse($products as $item)
             <div class="bg-white rounded-3xl border border-pink-100 p-4 sm:p-5 shadow-sm hover:shadow-md hover:border-pink-200 transition-all duration-200 flex flex-col justify-between group">
                 <div>
-                    <!-- Doll Illustration Preview -->
-                    <div class="w-full h-44 rounded-2xl bg-gradient-to-b from-pink-50/60 to-purple-50/40 border border-pink-100/60 flex items-center justify-center p-3 mb-3 relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-200">
-                        <img src="{{ asset($item->image_url ?? 'images/plushies/teddy-bear-pita.svg') }}" 
+                    <!-- Real Plushie Photo -->
+                    <div class="w-full h-52 rounded-2xl overflow-hidden mb-3 relative group-hover:scale-[1.02] transition-transform duration-200 bg-slate-100 border border-pink-100">
+                        <img src="{{ asset($item->image_url ?? 'images/plushies/teddy-bear-pita.jpg') }}" 
                              alt="{{ $item->name }}" 
-                             class="max-h-full max-w-full object-contain filter drop-shadow-sm">
+                             class="object-cover w-full h-52 rounded-2xl">
                         
                         <div class="absolute top-2.5 left-2.5">
                             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-white/90 backdrop-blur text-pink-600 border border-pink-200 shadow-xs">

@@ -18,10 +18,10 @@
     <div class="bg-white rounded-3xl p-6 sm:p-8 border border-pink-100 shadow-sm">
         <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
             <div class="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-5">
-                <div class="w-32 h-32 rounded-3xl bg-gradient-to-br from-pink-50 to-purple-50 border border-pink-100 p-2.5 flex items-center justify-center flex-shrink-0 shadow-xs">
-                    <img src="{{ asset($product->image_url ?? 'images/plushies/teddy-bear-pita.svg') }}" 
+                <div class="w-36 h-36 sm:w-48 sm:h-48 rounded-3xl overflow-hidden border border-pink-100 flex-shrink-0 shadow-sm bg-slate-100">
+                    <img src="{{ asset($product->image_url ?? 'images/plushies/teddy-bear-pita.jpg') }}" 
                          alt="{{ $product->name }}" 
-                         class="max-h-full max-w-full object-contain filter drop-shadow-sm">
+                         class="w-full h-full object-cover">
                 </div>
                 <div>
                     <div class="flex items-center space-x-2 mb-2">

@@ -71,9 +71,6 @@
                         </span>
                         <span class="font-black">Diza's <span class="text-slate-800">Plushie</span></span>
                     </a>
-                    <span class="hidden md:inline-block px-3 py-1 text-xs font-bold rounded-full bg-pink-50 text-rose-600 border border-pink-200">
-                        🌸 Soft Pastel Doll Store
-                    </span>
                 </div>
 
                 <!-- Desktop Navigation Menu -->

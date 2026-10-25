@@ -204,4 +204,13 @@ class PurchaseTest extends TestCase
         $this->assertEquals(2, $this->product1->fresh()->stock);
         $this->assertEquals('completed', $purchase->fresh()->status);
     }
+
+    public function test_purchases_create_with_product_id_preselects_product_for_restock(): void
+    {
+        $response = $this->actingAs($this->staff)->get(route('purchases.create', ['product_id' => $this->product1->id]));
+
+        $response->assertStatus(200);
+        $response->assertSee('Mode Restock Cepat: Boneka ' . $this->product1->name);
+        $response->assertSee($this->product1->sku);
+    }
 }
