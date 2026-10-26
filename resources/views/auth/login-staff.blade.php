@@ -8,17 +8,6 @@
 
         <!-- Soft Mint / Sage Green Header Banner -->
         <div class="p-6 sm:p-8 border-b border-emerald-100/60 bg-gradient-to-br from-emerald-50 via-teal-50/40 to-white text-slate-800">
-            <div class="flex items-center justify-between mb-4">
-                <span class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-xs">
-                    <i class="fa-solid fa-user-gear mr-1.5 text-emerald-600"></i>
-                    Portal Staff Kasir & Gudang 🌿
-                </span>
-
-                <span class="text-xs font-bold text-slate-400">
-                    Staff Portal
-                </span>
-            </div>
-
             <!-- Title & Subtitle -->
             <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
                 Portal Staff Operasional

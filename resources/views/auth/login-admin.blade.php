@@ -8,17 +8,6 @@
 
         <!-- Soft Lavender / Rose Gold Header Banner -->
         <div class="p-6 sm:p-8 border-b border-purple-100/60 bg-gradient-to-br from-purple-50 via-indigo-50/40 to-white text-slate-800">
-            <div class="flex items-center justify-between mb-4">
-                <span class="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-purple-100 text-purple-800 border border-purple-200 shadow-xs">
-                    <i class="fa-solid fa-shield-halved mr-1.5 text-purple-600"></i>
-                    Portal Pemilik & Administrator 👑
-                </span>
-
-                <span class="text-xs font-bold text-slate-400">
-                    Admin Portal
-                </span>
-            </div>
-
             <!-- Title & Subtitle -->
             <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
                 Portal Administrator & Owner

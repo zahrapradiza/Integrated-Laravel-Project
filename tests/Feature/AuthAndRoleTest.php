@@ -58,13 +58,14 @@ class AuthAndRoleTest extends TestCase
         $staffResponse = $this->get('/staff/login');
         $staffResponse->assertStatus(200);
         $staffResponse->assertSee('Portal Staff Operasional');
-        $staffResponse->assertSee('Portal Staff Kasir & Gudang', false);
+        $staffResponse->assertDontSee('Portal Staff Kasir & Gudang');
         $staffResponse->assertDontSee('Daftar Akun Customer Sekarang');
 
         // 2. Admin dedicated portal
         $adminResponse = $this->get('/admin/login');
         $adminResponse->assertStatus(200);
         $adminResponse->assertSee('Portal Administrator & Owner', false);
+        $adminResponse->assertDontSee('Portal Pemilik & Administrator');
         $adminResponse->assertDontSee('Daftar Akun Customer Sekarang');
 
         // 3. Backward compatible query param redirects to separate routes
