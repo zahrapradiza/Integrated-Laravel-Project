@@ -10,15 +10,15 @@
         </div>
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold bg-white/20 backdrop-blur border border-white/30 text-white mb-2">
-                    @if($user->isAdmin())
-                        <i class="fa-solid fa-shield-halved mr-1.5"></i> ROLE: ADMINISTRATOR / OWNER
-                    @elseif($user->isStaff())
-                        <i class="fa-solid fa-user-gear mr-1.5"></i> ROLE: STAFF KASIR & INVENTORI
-                    @else
-                        <i class="fa-solid fa-heart mr-1.5"></i> ROLE: PELANGGAN (CUSTOMER)
-                    @endif
-                </div>
+                @if($user->isAdmin() || $user->isStaff())
+                    <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold bg-white/20 backdrop-blur border border-white/30 text-white mb-2">
+                        @if($user->isAdmin())
+                            <i class="fa-solid fa-shield-halved mr-1.5"></i> ROLE: ADMINISTRATOR / OWNER
+                        @else
+                            <i class="fa-solid fa-user-gear mr-1.5"></i> ROLE: STAFF KASIR & INVENTORI
+                        @endif
+                    </div>
+                @endif
                 <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
                     Halo, {{ $user->name }}! 👋
                 </h1>
@@ -511,7 +511,7 @@
                                 <span class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-200">
                                     Stok: {{ $item->stock }}
                                 </span>
-                                <a href="{{ route('sales.create') }}" class="px-3 py-1.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white text-xs font-bold shadow-sm transition-all flex items-center" title="Pesan boneka ini">
+                                <a href="{{ route('sales.create', ['product_id' => $item->id]) }}" class="px-3 py-1.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white text-xs font-bold shadow-sm transition-all flex items-center" title="Pesan boneka ini">
                                     <i class="fa-solid fa-cart-shopping mr-1"></i> Pesan
                                 </a>
                             </div>

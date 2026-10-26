@@ -32,9 +32,15 @@ class SaleController extends Controller
 
         $sales = Sale::with(['user', 'customer', 'items.product'])
             ->when($user->isCustomer(), function ($query) use ($user) {
-                // Strictly filter to own customer sales matching logged-in customer name
-                $query->where('customer_id', $user->id)
-                      ->where('customer_name', $user->name);
+                // Strictly filter to own customer sales matching logged-in customer identity
+                $query->where(function ($userQuery) use ($user) {
+                    $userQuery->where('customer_id', $user->id)
+                              ->orWhere('user_id', $user->id);
+                })
+                ->where(function ($nameQuery) use ($user) {
+                    $nameQuery->where('customer_name', $user->name)
+                              ->orWhere('customer_name', 'like', $user->name . ' (%');
+                });
             })
             ->when($search, function ($query, $search) use ($user) {
                 if ($user->isCustomer()) {
@@ -69,7 +75,7 @@ class SaleController extends Controller
     /**
      * Show the form for creating a new sales transaction / customer order.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
         /** @var User $user */
         $user = Auth::user();
@@ -88,7 +94,7 @@ class SaleController extends Controller
                 ->get(['id', 'name', 'email', 'phone']);
         }
 
-        $selectedProductId = request()->query('product_id');
+        $selectedProductId = $request->query('product_id');
 
         return view('sales.create', compact('products', 'customers', 'user', 'selectedProductId'));
     }

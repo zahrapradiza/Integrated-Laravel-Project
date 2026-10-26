@@ -220,4 +220,36 @@ class SaleTest extends TestCase
             'payment_status' => 'paid',
         ]);
     }
+
+    public function test_customer_sales_index_does_not_show_new_order_button_and_syncs_with_dashboard(): void
+    {
+        $sale = Sale::create([
+            'user_id' => $this->customer1->id,
+            'customer_id' => $this->customer1->id,
+            'customer_name' => $this->customer1->name,
+            'sale_number' => 'INV-20261026-0009',
+            'total' => 90000,
+            'status' => 'completed',
+            'sold_at' => now(),
+        ]);
+
+        $response = $this->actingAs($this->customer1)->get('/sales');
+        $response->assertStatus(200);
+        $response->assertSee('Riwayat Pesanan Saya');
+        $response->assertDontSee('Pesan Boneka Baru');
+        $response->assertSee('INV-20261026-0009');
+
+        // Verify dashboard also shows this sale
+        $dashResponse = $this->actingAs($this->customer1)->get('/dashboard');
+        $dashResponse->assertStatus(200);
+        $dashResponse->assertSee('INV-20261026-0009');
+    }
+
+    public function test_sales_create_with_product_id_preselects_product_in_cart(): void
+    {
+        $response = $this->actingAs($this->customer1)->get('/sales/create?product_id=' . $this->product1->id);
+        $response->assertStatus(200);
+        $response->assertSee('Keranjang Boneka yang Dibeli');
+        $response->assertSee($this->product1->name);
+    }
 }

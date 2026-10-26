@@ -229,7 +229,7 @@
 
         let optionsHtml = '<option value="">-- Pilih Koleksi Boneka --</option>';
         availableProducts.forEach(p => {
-            const isSelected = p.id == selectedProductId ? 'selected' : '';
+            const isSelected = String(p.id) === String(selectedProductId) ? 'selected' : '';
             const imgPath = p.image_asset_url || (p.image_url ? ("{{ asset('') }}" + p.image_url.replace(/^\//, '')) : defaultPlushieImg);
             optionsHtml += `<option value="${p.id}" data-price="${p.selling_price}" data-stock="${p.stock}" data-image="${imgPath}" data-img="${imgPath}" ${isSelected}>
                 ${p.name} (${p.size || 'Standard'}) - Sisa: ${p.stock} pcs
@@ -292,6 +292,7 @@
                 thumb.src = defaultPlushieImg;
             }
             validateAndCalculateRow(tr);
+            calculateGrandTotal();
         }
 
         select.addEventListener('change', updateRowFromSelection);
@@ -308,11 +309,15 @@
         });
 
         if (selectedProductId) {
-            select.value = selectedProductId;
-            updateRowFromSelection();
-        } else {
-            updateRowFromSelection();
+            select.value = String(selectedProductId);
+            for (let i = 0; i < select.options.length; i++) {
+                if (String(select.options[i].value) === String(selectedProductId)) {
+                    select.selectedIndex = i;
+                    break;
+                }
+            }
         }
+        updateRowFromSelection();
 
         rowIndex++;
     }
@@ -351,8 +356,8 @@
 
     document.getElementById('addRowBtn').addEventListener('click', () => addRow());
 
-    // Restore old inputs if validation error occurred
-    document.addEventListener('DOMContentLoaded', () => {
+    // Restore old inputs or initialize with preselected product from query
+    function initFormRows() {
         const oldItems = @json(old('items', []));
         const selectedProductIdFromQuery = @json($selectedProductId ?? request()->query('product_id'));
         if (oldItems && oldItems.length > 0) {
@@ -365,6 +370,12 @@
             // Initialize with 1 empty row
             addRow();
         }
-    });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initFormRows);
+    } else {
+        initFormRows();
+    }
 </script>
 @endsection

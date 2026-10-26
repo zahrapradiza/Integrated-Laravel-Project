@@ -171,7 +171,8 @@ class DashboardTest extends TestCase
         $response = $this->actingAs($this->customer)->get('/dashboard');
 
         $response->assertStatus(200);
-        $response->assertSee('ROLE: PELANGGAN (CUSTOMER)');
+        $response->assertDontSee('ROLE: PELANGGAN (CUSTOMER)');
+        $response->assertSee('Halo, ' . $this->customer->name);
 
         // Customer stats
         $response->assertSee('Pesanan Selesai');

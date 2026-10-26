@@ -19,12 +19,13 @@
             </p>
         </div>
 
-        <div>
-            <a href="{{ route('sales.create') }}" class="inline-flex items-center px-4 py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-sm shadow-sm transition-all duration-200">
-                <i class="fa-solid fa-plus mr-1.5"></i>
-                {{ $user->isCustomer() ? 'Pesan Boneka Baru' : 'Buat Penjualan Baru' }}
-            </a>
-        </div>
+        @if(!$user->isCustomer())
+            <div>
+                <a href="{{ route('sales.create') }}" class="inline-flex items-center px-4 py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-sm shadow-sm transition-all duration-200">
+                    <i class="fa-solid fa-plus mr-1.5"></i> Buat Penjualan Baru
+                </a>
+            </div>
+        @endif
     </div>
 
     <!-- Multi-Filter & Search Bar -->

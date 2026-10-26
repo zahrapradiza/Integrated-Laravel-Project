@@ -113,7 +113,7 @@
 
                 <!-- Quick Action Button -->
                 <div class="mt-3">
-                    <a href="{{ route('sales.create') }}" class="w-full inline-flex items-center justify-center py-2 px-3 rounded-2xl bg-pink-50 hover:bg-pink-100 text-pink-700 font-bold text-xs border border-pink-200 transition-colors">
+                    <a href="{{ route('sales.create', ['product_id' => $item->id]) }}" class="w-full inline-flex items-center justify-center py-2 px-3 rounded-2xl bg-pink-50 hover:bg-pink-100 text-pink-700 font-bold text-xs border border-pink-200 transition-colors">
                         <i class="fa-solid fa-basket-shopping mr-1.5 text-pink-500"></i> Pesan Boneka Ini
                     </a>
                 </div>

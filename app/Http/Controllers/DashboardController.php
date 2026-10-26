@@ -93,19 +93,37 @@ class DashboardController extends Controller
         }
 
         // 2. Customer Dashboard View
-        $myOrdersCount = Sale::where('customer_id', $user->id)
-            ->where('customer_name', $user->name)
+        $myOrdersCount = Sale::where(function ($userQuery) use ($user) {
+                $userQuery->where('customer_id', $user->id)
+                          ->orWhere('user_id', $user->id);
+            })
+            ->where(function ($nameQuery) use ($user) {
+                $nameQuery->where('customer_name', $user->name)
+                          ->orWhere('customer_name', 'like', $user->name . ' (%');
+            })
             ->where('status', 'completed')
             ->count();
 
-        $myTotalSpent = (float) Sale::where('customer_id', $user->id)
-            ->where('customer_name', $user->name)
+        $myTotalSpent = (float) Sale::where(function ($userQuery) use ($user) {
+                $userQuery->where('customer_id', $user->id)
+                          ->orWhere('user_id', $user->id);
+            })
+            ->where(function ($nameQuery) use ($user) {
+                $nameQuery->where('customer_name', $user->name)
+                          ->orWhere('customer_name', 'like', $user->name . ' (%');
+            })
             ->where('status', 'completed')
             ->sum('total');
 
         $myRecentOrders = Sale::with(['items.product'])
-            ->where('customer_id', $user->id)
-            ->where('customer_name', $user->name)
+            ->where(function ($userQuery) use ($user) {
+                $userQuery->where('customer_id', $user->id)
+                          ->orWhere('user_id', $user->id);
+            })
+            ->where(function ($nameQuery) use ($user) {
+                $nameQuery->where('customer_name', $user->name)
+                          ->orWhere('customer_name', 'like', $user->name . ' (%');
+            })
             ->latest('sold_at')
             ->take(5)
             ->get();
